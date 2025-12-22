@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
 import 'package:the_pink_club/features/providers/data/model/provider_ad_model.dart';
+import 'package:the_pink_club/l10n/app_localizations.dart';
 
 class ProviderDetailsScreen extends StatelessWidget {
   final ProviderAdModel provider;
@@ -11,6 +12,7 @@ class ProviderDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final locale = Localizations.localeOf(context).languageCode;
     final name = locale == 'ar' ? provider.name : provider.nameEn;
     final details = locale == 'ar' ? provider.details : provider.detailsEn;
@@ -23,21 +25,27 @@ class ProviderDetailsScreen extends StatelessWidget {
           _buildAppBar(context, name),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
+              padding: const EdgeInsetsDirectional.symmetric(
+                horizontal: 28,
+                vertical: 32,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withAlpha(20),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Text(
-                          'PREMIUM PARTNER',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.premiumPartner,
+                          style: const TextStyle(
                             fontSize: 10,
                             fontWeight: FontWeight.w700,
                             color: AppColors.primary,
@@ -58,9 +66,9 @@ class ProviderDetailsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  const Text(
-                    'Exclusive Offering',
-                    style: TextStyle(
+                  Text(
+                    l10n.exclusiveOffering,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       color: AppColors.textPrimary,
@@ -83,7 +91,7 @@ class ProviderDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildActionArea(),
+      bottomNavigationBar: _buildActionArea(l10n),
     );
   }
 
@@ -92,11 +100,14 @@ class ProviderDetailsScreen extends StatelessWidget {
       expandedHeight: 400,
       pinned: true,
       stretch: true,
-      backgroundColor: AppColors.textPrimary,
       leading: IconButton(
         icon: const CircleAvatar(
           backgroundColor: Colors.white,
-          child: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textPrimary),
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 18,
+            color: AppColors.textPrimary,
+          ),
         ),
         onPressed: () => Navigator.pop(context),
       ),
@@ -105,20 +116,13 @@ class ProviderDetailsScreen extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            CachedNetworkImage(
-              imageUrl: provider.image,
-              fit: BoxFit.cover,
-            ),
+            CachedNetworkImage(imageUrl: provider.image, fit: BoxFit.fill),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black26,
-                    Colors.transparent,
-                    Colors.black54,
-                  ],
+                  begin: AlignmentDirectional.topCenter,
+                  end: AlignmentDirectional.bottomCenter,
+                  colors: [Colors.black26, Colors.transparent, Colors.black54],
                   stops: [0.0, 0.4, 1.0],
                 ),
               ),
@@ -129,9 +133,9 @@ class ProviderDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildActionArea() {
+  Widget _buildActionArea(AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(28, 20, 28, 40),
+      padding: const EdgeInsetsDirectional.fromSTEB(28, 20, 28, 40),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.divider, width: 1)),
@@ -147,9 +151,9 @@ class ProviderDetailsScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-        child: const Text(
-          'Inquire for Bespoke Access',
-          style: TextStyle(
+        child: Text(
+          l10n.inquireBespokeAccess,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,

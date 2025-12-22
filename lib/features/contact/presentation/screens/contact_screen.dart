@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
 import 'package:the_pink_club/features/contact/presentation/providers/contact_provider.dart';
+import 'package:the_pink_club/l10n/app_localizations.dart';
 
 class ContactScreen extends ConsumerStatefulWidget {
   const ContactScreen({super.key});
@@ -31,13 +32,14 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   @override
   Widget build(BuildContext context) {
     final contactState = ref.watch(contactProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     ref.listen(contactProvider, (prev, next) {
       next.whenOrNull(
         data: (_) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Your message has been received'),
+            SnackBar(
+              content: Text(l10n.messageReceived),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
@@ -60,7 +62,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Contact Excellence'),
+        title: Text(l10n.contactExcellence),
         centerTitle: true,
         titleTextStyle: const TextStyle(
           fontSize: 16,
@@ -71,13 +73,13 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       ),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Get in Touch',
-              style: TextStyle(
+            Text(
+              l10n.getInTouch,
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -85,9 +87,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Our concierge team is here to assist you with any inquiries or bespoke requests.',
-              style: TextStyle(
+            Text(
+              l10n.contactSupportDesc,
+              style: const TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary,
                 height: 1.5,
@@ -104,7 +106,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
             ).animate().fadeIn(duration: 400.ms).moveY(begin: 10, end: 0),
 
             const SizedBox(height: 40),
-            _buildForm(contactState.isLoading),
+            _buildForm(contactState.isLoading, l10n),
             const SizedBox(height: 40),
           ],
         ),
@@ -158,16 +160,16 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     );
   }
 
-  Widget _buildForm(bool isLoading) {
+  Widget _buildForm(bool isLoading, AppLocalizations l10n) {
     return Form(
       key: _formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _input(nameCtrl, 'Full Name', Icons.person_outline_rounded),
-          _input(emailCtrl, 'Email Address', Icons.email_outlined, keyboard: TextInputType.emailAddress),
-          _input(phoneCtrl, 'WhatsApp / Phone', Icons.phone_outlined, keyboard: TextInputType.phone),
-          _input(messageCtrl, 'Your Inquiry', Icons.chat_bubble_outline_rounded, maxLines: 5),
+          _input(nameCtrl, l10n.fullName, Icons.person_outline_rounded, l10n),
+          _input(emailCtrl, l10n.emailAddress, Icons.email_outlined, l10n, keyboard: TextInputType.emailAddress),
+          _input(phoneCtrl, l10n.phoneWhatsApp, Icons.phone_outlined, l10n, keyboard: TextInputType.phone),
+          _input(messageCtrl, l10n.yourInquiry, Icons.chat_bubble_outline_rounded, l10n, maxLines: 5),
           const SizedBox(height: 12),
           ElevatedButton(
             onPressed: isLoading
@@ -197,9 +199,9 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
                     width: 20,
                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : const Text(
-                    'Transmit Message',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                : Text(
+                    l10n.transmitMessage,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                   ),
           ),
         ],
@@ -210,7 +212,8 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   Widget _input(
     TextEditingController controller,
     String label,
-    IconData icon, {
+    IconData icon,
+    AppLocalizations l10n, {
     TextInputType keyboard = TextInputType.text,
     int maxLines = 1,
   }) {
@@ -220,7 +223,7 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
         controller: controller,
         keyboardType: keyboard,
         maxLines: maxLines,
-        validator: (v) => v == null || v.isEmpty ? 'Field required' : null,
+        validator: (v) => v == null || v.isEmpty ? l10n.fieldRequired : null,
         style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
         decoration: InputDecoration(
           labelText: label,

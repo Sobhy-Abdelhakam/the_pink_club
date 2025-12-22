@@ -4,7 +4,7 @@ import '../../data/about_repository.dart';
 import '../../data/models/about_model.dart';
 
 final aboutRepositoryProvider = Provider(
-  (ref) => AboutRepository(ApiClient()),
+  (ref) => AboutRepository(ref.watch(apiClientProvider)),
 );
 
 final aboutProvider = FutureProvider<AboutModel>((ref) {

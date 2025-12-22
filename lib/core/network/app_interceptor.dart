@@ -1,16 +1,26 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:the_pink_club/core/providers/locale_provider.dart';
 
 class AppInterceptor extends Interceptor {
+  final Ref ref;
+
+  AppInterceptor(this.ref);
+
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
+    final locale = ref.read(localeProvider);
+    
     // Common headers
     options.headers.addAll({
       'Accept': 'application/json',
       'Content-Type': 'application/json',
+      'lang': locale.languageCode,
+      'Accept-Language': locale.languageCode,
     });
 
     if (kDebugMode) {

@@ -4,7 +4,7 @@ import 'package:the_pink_club/core/network/api_client.dart';
 import '../../data/contact_repository.dart';
 
 final contactRepositoryProvider = Provider(
-  (ref) => ContactRepository(ApiClient()),
+  (ref) => ContactRepository(ref.watch(apiClientProvider)),
 );
 
 final contactProvider =

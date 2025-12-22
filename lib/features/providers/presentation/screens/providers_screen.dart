@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
 import 'package:the_pink_club/features/providers/presentation/providers/providers_provider.dart';
+import 'package:the_pink_club/l10n/app_localizations.dart';
 
 import 'provider_details_screen.dart';
 
@@ -14,11 +15,12 @@ class ProvidersScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final providersAsync = ref.watch(providersAdsProvider);
     final locale = Localizations.localeOf(context).languageCode;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Bespoke Partners'),
+        title: Text(l10n.bespokePartners),
         centerTitle: true,
         titleTextStyle: const TextStyle(
           fontSize: 16,
@@ -32,7 +34,7 @@ class ProvidersScreen extends ConsumerWidget {
         error: (e, _) => Center(child: Text(e.toString())),
         data: (providers) => ListView.separated(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 20),
           itemCount: providers.length,
           separatorBuilder: (context, index) => const SizedBox(height: 20),
           itemBuilder: (_, index) {
@@ -71,9 +73,9 @@ class ProvidersScreen extends ConsumerWidget {
                     children: [
                       // Image Container
                       ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          bottomLeft: Radius.circular(20),
+                        borderRadius: const BorderRadiusDirectional.only(
+                          topStart: Radius.circular(20),
+                          bottomStart: Radius.circular(20),
                         ),
                         child: SizedBox(
                           width: 110,
@@ -102,7 +104,7 @@ class ProvidersScreen extends ConsumerWidget {
                       // Content
                       Expanded(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(
+                          padding: const EdgeInsetsDirectional.symmetric(
                             horizontal: 20,
                             vertical: 16,
                           ),

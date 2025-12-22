@@ -5,6 +5,7 @@ import 'package:the_pink_club/features/providers/presentation/screens/providers_
 import 'package:the_pink_club/features/subscription/presentation/screen/subscription_screen.dart';
 import 'package:the_pink_club/features/contact/presentation/screens/contact_screen.dart';
 import 'package:the_pink_club/features/about/presentation/screens/about_screen.dart';
+import 'package:the_pink_club/l10n/app_localizations.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -33,6 +34,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
@@ -75,26 +78,26 @@ class _MainScreenState extends State<MainScreen> {
             height: 1.5,
           ),
           elevation: 0,
-          items: const [
+          items: [
             BottomNavigationBarItem(
-              icon: Icon(Icons.grid_view_rounded, size: 20),
-              label: 'SERVICES',
+              icon: const Icon(Icons.grid_view_rounded, size: 20),
+              label: l10n.navServices,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.business_center_rounded, size: 20),
-              label: 'PARTNERS',
+              icon: const Icon(Icons.business_center_rounded, size: 20),
+              label: l10n.navPartners,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.star_rounded, size: 20),
-              label: 'MEMBERSHIP',
+              icon: const Icon(Icons.star_rounded, size: 20),
+              label: l10n.navMembership,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.support_agent_rounded, size: 20),
-              label: 'CONCIERGE',
+              icon: const Icon(Icons.support_agent_rounded, size: 20),
+              label: l10n.navConcierge,
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.info_rounded, size: 20),
-              label: 'IDENTITY',
+              icon: const Icon(Icons.info_rounded, size: 20),
+              label: l10n.navIdentity,
             ),
           ],
         ),

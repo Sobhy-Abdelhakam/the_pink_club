@@ -6,7 +6,7 @@ import 'package:the_pink_club/features/subscription/data/subscription_repository
 import '../../data/models/subscription_package.dart';
 
 final subscriptionRepositoryProvider = Provider(
-  (ref) => SubscriptionRepository(ApiClient()),
+  (ref) => SubscriptionRepository(ref.watch(apiClientProvider)),
 );
 
 final subscriptionPackagesProvider = FutureProvider<List<SubscriptionPackage>>((ref) async {

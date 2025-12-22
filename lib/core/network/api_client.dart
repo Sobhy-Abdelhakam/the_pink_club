@@ -1,13 +1,17 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:the_pink_club/core/network/app_interceptor.dart';
 
+final apiClientProvider = Provider<ApiClient>((ref) {
+  return ApiClient(ref);
+});
+
 class ApiClient {
-  static const _baseUrl =
-      'https://thepinkclub.net/admin/api/api_secure.php';
-
+  static const _baseUrl = 'https://thepinkclub.net/admin/api/api_secure.php';
   late final Dio dio;
+  final Ref ref;
 
-  ApiClient() {
+  ApiClient(this.ref) {
     dio = Dio(
       BaseOptions(
         baseUrl: _baseUrl,
@@ -16,7 +20,7 @@ class ApiClient {
       ),
     );
 
-    dio.interceptors.add(AppInterceptor());
+    dio.interceptors.add(AppInterceptor(ref));
   }
 
   Future<Response> get(String action) {

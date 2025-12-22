@@ -6,6 +6,8 @@ import 'package:the_pink_club/features/providers/presentation/providers/provider
 import 'package:the_pink_club/features/providers/presentation/widgets/ads_carousel_widget.dart';
 import 'package:the_pink_club/features/services/presentation/providers/services_provider.dart';
 import 'package:the_pink_club/features/services/presentation/widgets/service_card.dart';
+import 'package:the_pink_club/core/widgets/language_switcher.dart';
+import 'package:the_pink_club/l10n/app_localizations.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -13,73 +15,14 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final adsAsync = ref.watch(providersAdsProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          _buildAppBar(),
-
-          // Compact Welcome Header
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(28, 8, 28, 22),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Premium Member',
-                            style: TextStyle(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.primary,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                          SizedBox(height: 3),
-                          Text(
-                            'The Pink Club',
-                            style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                              letterSpacing: -0.6,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: 42,
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.divider,
-                            width: 1,
-                          ),
-                        ),
-                        child: const Icon(
-                          Icons.person_outline_rounded,
-                          color: AppColors.textPrimary,
-                          size: 20,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  _buildSearchField(),
-                ],
-              ),
-            ),
-          ),
+          _buildAppBar(context),
 
           // Ads Section
           SliverToBoxAdapter(
@@ -90,53 +33,69 @@ class HomeScreen extends ConsumerWidget {
               ),
               error: (context, error) => const SizedBox.shrink(),
               data: (ads) => Padding(
-                padding: const EdgeInsets.only(bottom: 24),
+                padding: const EdgeInsetsDirectional.only(top: 12, bottom: 28),
                 child: AdsCarouselWidget(ads: ads),
               ),
             ),
           ),
 
           // Sections
-          _buildServiceSection(ref, 'Premium Assistance', ApiActions.car),
-          _buildServiceSection(ref, 'Strategic Advisory', ApiActions.advisory),
+          _buildServiceSection(ref, l10n.premiumAssistance, ApiActions.car),
           _buildServiceSection(
             ref,
-            'Medical Network',
+            l10n.strategicAdvisory,
+            ApiActions.advisory,
+          ),
+          _buildServiceSection(
+            ref,
+            l10n.medicalNetwork,
             ApiActions.medicalServices,
           ),
-          _buildServiceSection(ref, 'Health Advisory', ApiActions.medical),
-          _buildServiceSection(ref, 'Elite Concierge', ApiActions.concierge),
-          _buildServiceSection(ref, 'Vehicle Supplies', ApiActions.automotive),
-          _buildServiceSection(ref, 'License Services', ApiActions.license),
-          _buildServiceSection(ref, 'Second Opinion', ApiActions.secondMedical),
-          _buildServiceSection(ref, 'Explore More', ApiActions.more),
+          _buildServiceSection(ref, l10n.healthAdvisory, ApiActions.medical),
+          _buildServiceSection(ref, l10n.eliteConcierge, ApiActions.concierge),
+          _buildServiceSection(
+            ref,
+            l10n.vehicleSupplies,
+            ApiActions.automotive,
+          ),
+          _buildServiceSection(ref, l10n.licenseServices, ApiActions.license),
+          _buildServiceSection(
+            ref,
+            l10n.secondOpinion,
+            ApiActions.secondMedical,
+          ),
+          _buildServiceSection(ref, l10n.exploreMore, ApiActions.more),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 40)),
+          const SliverToBoxAdapter(child: SizedBox(height: 60)),
         ],
       ),
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       floating: true,
-      backgroundColor: AppColors.background,
+      pinned: false,
+      backgroundColor: AppColors.background.withAlpha(240),
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
+      leadingWidth: 100,
+      leading: const Center(child: LanguageSwitcher()),
       title: Text(
-        'THE PINK CLUB',
+        AppLocalizations.of(context)!.appTitle.toUpperCase(),
         style: TextStyle(
-          fontSize: 13,
+          fontSize: 12,
           fontWeight: FontWeight.w800,
-          letterSpacing: 2.5,
-          color: AppColors.textPrimary.withAlpha(150),
+          letterSpacing: 2.0,
+          color: AppColors.textPrimary.withAlpha(180),
         ),
       ),
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 20),
+          padding: const EdgeInsetsDirectional.only(end: 12),
           child: IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, size: 22),
+            icon: const Icon(Icons.notifications_outlined, size: 24),
             onPressed: () {},
           ),
         ),
@@ -149,7 +108,8 @@ class HomeScreen extends ConsumerWidget {
 
     return servicesAsync.when(
       loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-      error: (context, error) => const SliverToBoxAdapter(child: SizedBox.shrink()),
+      error: (context, error) =>
+          const SliverToBoxAdapter(child: SizedBox.shrink()),
       data: (services) {
         if (services.isEmpty) {
           return const SliverToBoxAdapter(child: SizedBox.shrink());
@@ -159,28 +119,31 @@ class HomeScreen extends ConsumerWidget {
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(28, 20, 28, 12),
+                padding: const EdgeInsetsDirectional.fromSTEB(28, 32, 28, 16),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
                       title,
                       style: const TextStyle(
-                        fontSize: 14.5,
+                        fontSize: 16,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
-                        letterSpacing: -0.4,
+                        letterSpacing: -0.5,
                       ),
                     ),
                     const Spacer(),
                     GestureDetector(
                       onTap: () {},
-                      child: Text(
-                        'View All',
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary.withAlpha(180),
-                          letterSpacing: 0.2,
+                      child: Builder(
+                        builder: (context) => Text(
+                          AppLocalizations.of(context)!.viewAll,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.primary.withAlpha(200),
+                            letterSpacing: 0.2,
+                          ),
                         ),
                       ),
                     ),
@@ -190,50 +153,24 @@ class HomeScreen extends ConsumerWidget {
             ),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 160, // Elite breathing room
+                height: 172, // Calibrated height
                 child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(horizontal: 28),
+                  padding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: 28,
+                  ),
                   scrollDirection: Axis.horizontal,
                   physics: const BouncingScrollPhysics(),
                   itemCount: services.length,
-                  separatorBuilder: (context, index) => const SizedBox(width: 14),
-                  itemBuilder: (context, index) => ServiceCard(service: services[index]),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 16),
+                  itemBuilder: (context, index) =>
+                      ServiceCard(service: services[index]),
                 ),
               ),
             ),
           ],
         );
       },
-    );
-  }
-
-  Widget _buildSearchField() {
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.divider, width: 0.8),
-      ),
-      child: const Row(
-        children: [
-          Icon(Icons.search_rounded, color: AppColors.textSecondary, size: 20),
-          SizedBox(width: 12),
-          Expanded(
-            child: TextField(
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: 'Search services...',
-                hintStyle: TextStyle(
-                  color: AppColors.textSecondary,
-                  fontSize: 13,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

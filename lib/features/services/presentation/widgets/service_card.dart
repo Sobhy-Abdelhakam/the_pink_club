@@ -26,22 +26,22 @@ class ServiceCard extends StatelessWidget {
           ),
         );
       },
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(18),
       child: Container(
-        width: 140,
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        width: 154,
+        padding: const EdgeInsetsDirectional.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: AppColors.divider.withAlpha(80),
-            width: 0.8,
+            color: AppColors.divider.withAlpha(100),
+            width: 1.0,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: Colors.black.withAlpha(10),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -49,28 +49,34 @@ class ServiceCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
-                color: service.brandColor.withAlpha(12),
+                color: service.brandColor.withAlpha(18),
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: service.brandColor.withAlpha(30),
+                  width: 1,
+                ),
               ),
-              child: ClipOval(
-                child: service.image != null && service.image!.isNotEmpty
-                    ? CachedNetworkImage(
-                        imageUrl: service.image!,
-                        fit: BoxFit.cover,
-                        errorWidget: (context, url, error) => Icon(
+              child: Center(
+                child: ClipOval(
+                  child: service.image != null && service.image!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: service.image!,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => Icon(
+                            _getIconData(service.icon),
+                            color: service.brandColor,
+                            size: 20,
+                          ),
+                        )
+                      : Icon(
                           _getIconData(service.icon),
                           color: service.brandColor,
-                          size: 18,
+                          size: 20,
                         ),
-                      )
-                    : Icon(
-                        _getIconData(service.icon),
-                        color: service.brandColor,
-                        size: 18,
-                      ),
+                ),
               ),
             ),
             const Spacer(),
@@ -78,32 +84,29 @@ class ServiceCard extends StatelessWidget {
               service.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 12.5,
-                color: AppColors.textPrimary,
-                letterSpacing: -0.3,
-              ),
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: -0.4,
+                  ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             SizedBox(
-              height: 28, // Fix height for 2 lines of 10pt text to prevent overflows
+              height: 32,
               child: Text(
                 service.description,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontSize: 10,
-                  color: AppColors.textSecondary.withAlpha(160),
-                  height: 1.3,
-                  letterSpacing: 0,
-                ),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      height: 1.4,
+                      color: AppColors.textSecondary.withAlpha(180),
+                    ),
               ),
             ),
           ],
         ),
       ),
-    ).animate().fadeIn(duration: 400.ms).moveY(begin: 4, end: 0, curve: Curves.easeOutCubic);
+    ).animate().fadeIn(duration: 500.ms, curve: Curves.easeOut).moveY(begin: 8, end: 0, curve: Curves.easeOutCubic);
   }
 
   IconData _getIconData(String iconName) {

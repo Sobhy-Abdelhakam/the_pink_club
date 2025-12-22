@@ -4,7 +4,7 @@ import '../../data/services_repository.dart';
 import '../../data/models/service_model.dart';
 
 final servicesRepositoryProvider = Provider(
-  (ref) => ServicesRepository(ApiClient()),
+  (ref) => ServicesRepository(ref.watch(apiClientProvider)),
 );
 
 final servicesProvider =

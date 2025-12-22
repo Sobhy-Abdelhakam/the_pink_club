@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
 import '../../data/models/service_model.dart';
+import 'package:the_pink_club/l10n/app_localizations.dart';
 
 class ServiceDetailsScreen extends StatelessWidget {
   final ServiceModel service;
@@ -11,6 +12,7 @@ class ServiceDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
@@ -19,15 +21,15 @@ class ServiceDetailsScreen extends StatelessWidget {
           _buildSliverAppBar(context),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 28, vertical: 32),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(),
+                  _buildHeader(l10n),
                   const SizedBox(height: 32),
-                  _buildDescription(),
+                  _buildDescription(l10n),
                   const SizedBox(height: 40),
-                  _buildFeaturesSection(),
+                  _buildFeaturesSection(l10n),
                   const SizedBox(height: 120),
                 ],
               ),
@@ -35,7 +37,7 @@ class ServiceDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomAction(context),
+      bottomNavigationBar: _buildBottomAction(context, l10n),
     );
   }
 
@@ -84,7 +86,7 @@ class ServiceDetailsScreen extends StatelessWidget {
       ),
       actions: [
         Padding(
-          padding: const EdgeInsets.only(right: 16),
+          padding: const EdgeInsetsDirectional.only(end: 16),
           child: IconButton(
             icon: const CircleAvatar(
               backgroundColor: Colors.white,
@@ -110,7 +112,7 @@ class ServiceDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,7 +123,7 @@ class ServiceDetailsScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(6),
           ),
           child: Text(
-            'EXCLUSIVE SERVICE',
+            l10n.exclusiveService,
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w700,
@@ -144,13 +146,13 @@ class ServiceDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDescription() {
+  Widget _buildDescription(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'About Service',
-          style: TextStyle(
+        Text(
+          l10n.aboutService,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -171,15 +173,15 @@ class ServiceDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeaturesSection() {
+  Widget _buildFeaturesSection(AppLocalizations l10n) {
     if (service.features.isEmpty) return const SizedBox.shrink();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Key Advantages',
-          style: TextStyle(
+        Text(
+          l10n.keyAdvantages,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -214,9 +216,9 @@ class ServiceDetailsScreen extends StatelessWidget {
     ).animate().fadeIn(duration: 500.ms, delay: 200.ms);
   }
 
-  Widget _buildBottomAction(BuildContext context) {
+  Widget _buildBottomAction(BuildContext context, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(28, 20, 28, 40),
+      padding: const EdgeInsetsDirectional.fromSTEB(28, 20, 28, 40),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.divider, width: 1)),
@@ -224,8 +226,8 @@ class ServiceDetailsScreen extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Processing your inquiry...'),
+            SnackBar(
+              content: Text(l10n.processingInquiry),
               behavior: SnackBarBehavior.floating,
               backgroundColor: AppColors.textPrimary,
             ),
@@ -240,9 +242,9 @@ class ServiceDetailsScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-        child: const Text(
-          'Request Service Access',
-          style: TextStyle(
+        child: Text(
+          l10n.requestServiceAccess,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             letterSpacing: 0.5,

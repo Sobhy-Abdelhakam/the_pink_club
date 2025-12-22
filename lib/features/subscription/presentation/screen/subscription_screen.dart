@@ -6,6 +6,7 @@ import 'package:the_pink_club/core/widgets/elite_button.dart';
 import 'package:the_pink_club/core/widgets/elite_text_field.dart';
 import 'package:the_pink_club/features/subscription/data/models/subscription_package.dart';
 import 'package:the_pink_club/features/subscription/presentation/providers/subscription_provider.dart';
+import 'package:the_pink_club/l10n/app_localizations.dart';
 
 class SubscriptionScreen extends ConsumerStatefulWidget {
   const SubscriptionScreen({super.key});
@@ -44,10 +45,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     super.dispose();
   }
 
-  void _nextStep() {
+  void _nextStep(AppLocalizations l10n) {
     if (_currentStep == 0 && selectedPackage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a package first')),
+        SnackBar(content: Text(l10n.selectPackageFirst)),
       );
       return;
     }
@@ -66,13 +67,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     final packagesAsync = ref.watch(subscriptionPackagesProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     ref.listen(subscriptionProvider, (prev, next) {
       next.whenOrNull(
         data: (_) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Membership secured successfully'),
+            SnackBar(
+              content: Text(l10n.membershipSuccess),
               backgroundColor: AppColors.success,
               behavior: SnackBarBehavior.floating,
             ),
@@ -94,7 +96,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Exclusive Membership'),
+        title: Text(l10n.exclusiveMembership),
         centerTitle: true,
         leading: _currentStep > 0
             ? IconButton(
@@ -127,7 +129,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   ),
                 );
               },
-              child: _buildStepContent(packagesAsync),
+              child: _buildStepContent(packagesAsync, l10n),
             ),
           ),
         ],
@@ -137,7 +139,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
   Widget _buildStepIndicator() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+      padding: const EdgeInsetsDirectional.symmetric(vertical: 20, horizontal: 40),
       child: Row(
         children: List.generate(3, (index) {
           final isActive = index <= _currentStep;
@@ -177,7 +179,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   Expanded(
                     child: Container(
                       height: 2,
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
+                      margin: const EdgeInsetsDirectional.symmetric(horizontal: 10),
                       color: index < _currentStep ? AppColors.primary : AppColors.divider,
                     ),
                   ),
@@ -189,30 +191,30 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
   }
 
-  Widget _buildStepContent(AsyncValue<List<SubscriptionPackage>> packagesAsync) {
+  Widget _buildStepContent(AsyncValue<List<SubscriptionPackage>> packagesAsync, AppLocalizations l10n) {
     switch (_currentStep) {
       case 0:
-        return _buildPackageStep(packagesAsync);
+        return _buildPackageStep(packagesAsync, l10n);
       case 1:
-        return _buildIdentityStep();
+        return _buildIdentityStep(l10n);
       case 2:
-        return _buildVehicleStep();
+        return _buildVehicleStep(l10n);
       default:
         return const SizedBox.shrink();
     }
   }
 
-  Widget _buildPackageStep(AsyncValue<List<SubscriptionPackage>> packagesAsync) {
+  Widget _buildPackageStep(AsyncValue<List<SubscriptionPackage>> packagesAsync, AppLocalizations l10n) {
     return SingleChildScrollView(
       key: const ValueKey(0),
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text(
-            'Choose Your Privilege',
-            style: TextStyle(
+          Text(
+            l10n.choosePrivilege,
+            style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w600,
               color: AppColors.textPrimary,
@@ -221,7 +223,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Select the package that best fits your bespoke lifestyle.',
+            l10n.choosePackageDesc,
             style: TextStyle(
               fontSize: 14,
               color: AppColors.textSecondary.withAlpha(200),
@@ -235,34 +237,34 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
             ),
-            error: (err, _) => Center(child: Text('Consultation Error: $err')),
+            error: (err, _) => Center(child: Text('Error: $err')),
             data: (packages) => Column(
               children: packages.map((pkg) => _buildPackageCard(pkg)).toList(),
             ),
           ),
           const SizedBox(height: 24),
           EliteButton(
-            label: 'Continue Authentication',
-            onPressed: selectedPackage != null ? _nextStep : null,
+            label: l10n.continueAuthentication,
+            onPressed: selectedPackage != null ? () => _nextStep(l10n) : null,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildIdentityStep() {
+  Widget _buildIdentityStep(AppLocalizations l10n) {
     return SingleChildScrollView(
       key: const ValueKey(1),
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 10),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Personal Identity',
-              style: TextStyle(
+            Text(
+              l10n.personalIdentity,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -271,7 +273,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Complete your authentication to proceed with the membership.',
+              l10n.identityStepDesc,
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary.withAlpha(200),
@@ -280,25 +282,28 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             const SizedBox(height: 32),
             EliteTextField(
               controller: fullNameCtrl,
-              label: 'Full Legal Name',
+              label: l10n.fullLegalName,
               icon: Icons.person_outline_rounded,
             ),
             EliteTextField(
               controller: phoneCtrl,
-              label: 'Primary Contact Number',
+              label: l10n.primaryContactNumber,
               icon: Icons.phone_outlined,
               keyboard: TextInputType.phone,
             ),
             EliteTextField(
               controller: addressCtrl,
-              label: 'Residency Address',
+              label: l10n.residencyAddress,
               icon: Icons.location_on_outlined,
             ),
-            _dropdown('Select Gender', gender, ['male', 'female'], (v) => setState(() => gender = v!)),
+            _dropdown(l10n.selectGender, gender, {
+              'male': l10n.male,
+              'female': l10n.female,
+            }, (v) => setState(() => gender = v!)),
             const SizedBox(height: 24),
             EliteButton(
-              label: 'Proceed to Vehicle Details',
-              onPressed: _nextStep,
+              label: l10n.proceedToVehicle,
+              onPressed: () => _nextStep(l10n),
             ),
           ],
         ),
@@ -306,21 +311,21 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
   }
 
-  Widget _buildVehicleStep() {
+  Widget _buildVehicleStep(AppLocalizations l10n) {
     final subscriptionState = ref.watch(subscriptionProvider);
 
     return SingleChildScrollView(
       key: const ValueKey(2),
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 10),
       child: Form(
         key: _formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Vehicle Specification',
-              style: TextStyle(
+            Text(
+              l10n.vehicleSpecification,
+              style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -329,7 +334,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Register your primary vehicle for club eligibility.',
+              l10n.vehicleStepDesc,
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.textSecondary.withAlpha(200),
@@ -338,12 +343,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             const SizedBox(height: 32),
             EliteTextField(
               controller: carBrandCtrl,
-              label: 'Manufacturer / Brand',
+              label: l10n.manufacturerBrand,
               icon: Icons.directions_car_filled_outlined,
             ),
             EliteTextField(
               controller: carModelCtrl,
-              label: 'Vehicle Model',
+              label: l10n.vehicleModel,
               icon: Icons.model_training_outlined,
             ),
             Row(
@@ -351,7 +356,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 Expanded(
                   child: EliteTextField(
                     controller: carYearCtrl,
-                    label: 'Manufacture Year',
+                    label: l10n.manufactureYear,
                     icon: Icons.calendar_today_outlined,
                     keyboard: TextInputType.number,
                   ),
@@ -360,7 +365,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 Expanded(
                   child: EliteTextField(
                     controller: carPlateCtrl,
-                    label: 'Plate Identifier',
+                    label: l10n.plateIdentifier,
                     icon: Icons.badge_outlined,
                   ),
                 ),
@@ -368,13 +373,16 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
             EliteTextField(
               controller: carChassisCtrl,
-              label: 'Chassis VIN Number',
+              label: l10n.chassisVin,
               icon: Icons.format_list_numbered_rtl_rounded,
             ),
-            _dropdown('Preferred Payment', paymentMethod, ['cash', 'online'], (v) => setState(() => paymentMethod = v!)),
+            _dropdown(l10n.preferredPayment, paymentMethod, {
+              'cash': l10n.cash,
+              'online': l10n.online,
+            }, (v) => setState(() => paymentMethod = v!)),
             const SizedBox(height: 24),
             EliteButton(
-              label: 'Confirm Membership',
+              label: l10n.confirmMembership,
               isLoading: subscriptionState.isLoading,
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
@@ -390,7 +398,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     'gender': gender,
                     'payment_method': paymentMethod,
                     'package_id': selectedPackage!.id.toString(),
-                    'birthday': '1995-10-10', // Standardized ISO-like placeholder
+                    'birthday': '1995-10-10',
                   });
                 }
               },
@@ -409,7 +417,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       onTap: () => setState(() => selectedPackage = pkg),
       child: AnimatedContainer(
         duration: 300.ms,
-        margin: const EdgeInsets.only(bottom: 16),
+        margin: const EdgeInsetsDirectional.only(bottom: 16),
         padding: const EdgeInsets.all(24),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -452,7 +460,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
             const SizedBox(height: 12),
             ...pkg.features.map((feature) => Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
+                  padding: const EdgeInsetsDirectional.only(bottom: 6),
                   child: Row(
                     children: [
                       const Icon(Icons.check_circle_outline_rounded, size: 16, color: AppColors.success),
@@ -475,16 +483,16 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
   }
 
-  Widget _dropdown(String label, String value, List<String> items, Function(String?) onChanged) {
+  Widget _dropdown(String label, String value, Map<String, String> items, Function(String?) onChanged) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsetsDirectional.only(bottom: 20),
       child: DropdownButtonFormField<String>(
         initialValue: value,
         style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
-        items: items
+        items: items.entries
             .map((e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e.substring(0, 1).toUpperCase() + e.substring(1)),
+                  value: e.key,
+                  child: Text(e.value),
                 ))
             .toList(),
         onChanged: onChanged,
@@ -509,7 +517,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: 20, vertical: 18),
         ),
       ),
     );

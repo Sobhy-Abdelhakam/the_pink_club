@@ -21,19 +21,34 @@ class AppTheme {
           fontSize: 32,
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
+          letterSpacing: -1.0,
         ),
         titleLarge: GoogleFonts.poppins(
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: AppColors.textPrimary,
+          letterSpacing: -0.5,
+        ),
+        titleMedium: GoogleFonts.poppins(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          letterSpacing: -0.2,
         ),
         bodyLarge: GoogleFonts.poppins(
           fontSize: 16,
           color: AppColors.textPrimary,
+          height: 1.5,
         ),
         bodyMedium: GoogleFonts.poppins(
           fontSize: 14,
           color: AppColors.textSecondary,
+          height: 1.5,
+        ),
+        bodySmall: GoogleFonts.poppins(
+          fontSize: 12,
+          color: AppColors.textSecondary.withAlpha(180),
+          letterSpacing: 0.1,
         ),
       ),
 
@@ -44,18 +59,19 @@ class AppTheme {
         centerTitle: true,
         titleTextStyle: TextStyle(
           color: AppColors.textPrimary,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 1.5,
         ),
-        iconTheme: IconThemeData(color: AppColors.textPrimary),
+        iconTheme: IconThemeData(color: AppColors.textPrimary, size: 22),
       ),
 
       // Card Theme
       cardTheme: CardThemeData(
-        elevation: 2,
-        shadowColor: Colors.black.withAlpha(20),
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: AppColors.divider, width: 0.8),
         ),
         color: AppColors.surface,
       ),

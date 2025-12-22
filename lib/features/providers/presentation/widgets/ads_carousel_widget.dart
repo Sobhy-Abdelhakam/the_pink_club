@@ -35,7 +35,7 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
           },
           options: CarouselOptions(
             height: 200,
-            viewportFraction: 0.8,
+            viewportFraction: 1,
             enlargeCenterPage: true,
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 5),
@@ -63,19 +63,22 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
+        margin: const EdgeInsetsDirectional.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColors.divider.withAlpha(100),
+            width: 1.0,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(15),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+              color: Colors.black.withAlpha(12),
+              blurRadius: 25,
+              offset: const Offset(0, 10),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(8),
           child: Stack(
             children: [
               // Background Image
@@ -85,34 +88,42 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
                 width: double.infinity,
                 height: double.infinity,
                 placeholder: (context, url) => Container(
-                  color: AppColors.divider,
+                  color: AppColors.divider.withAlpha(50),
                   child: const Center(
                     child: SizedBox(
-                      width: 20,
-                      height: 20,
+                      width: 24,
+                      height: 24,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     ),
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
-                  color: AppColors.divider,
-                  child: const Icon(Icons.error_outline_rounded, size: 20),
+                  color: AppColors.divider.withAlpha(50),
+                  child: const Icon(
+                    Icons.business_rounded,
+                    color: AppColors.textSecondary,
+                    size: 28,
+                  ),
                 ),
               ),
-              // Gradient Overlay
+              // Gradient Overlay (More subtle & sophisticated)
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    stops: const [0, 0.6],
-                    colors: [Colors.black.withAlpha(150), Colors.transparent],
+                    begin: AlignmentDirectional.bottomCenter,
+                    end: AlignmentDirectional.topCenter,
+                    stops: const [0.0, 0.45, 1.0],
+                    colors: [
+                      Colors.black.withAlpha(180),
+                      Colors.black.withAlpha(40),
+                      Colors.transparent,
+                    ],
                   ),
                 ),
               ),
               // Text Content
               Padding(
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,17 +132,19 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
                       ad.name,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.2,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
                       ),
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: 4),
                     Text(
                       ad.shortDesc,
                       style: TextStyle(
-                        color: Colors.white.withAlpha(200),
-                        fontSize: 10,
+                        color: Colors.white.withAlpha(220),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.1,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -163,9 +176,10 @@ class AnimatedIndicator extends StatelessWidget {
       activeIndex: activeIndex,
       count: count,
       effect: const ExpandingDotsEffect(
-        dotHeight: 8,
-        dotWidth: 8,
-        spacing: 6,
+        dotHeight: 5,
+        dotWidth: 5,
+        expansionFactor: 4,
+        spacing: 8,
         activeDotColor: AppColors.primary,
         dotColor: AppColors.divider,
       ),
