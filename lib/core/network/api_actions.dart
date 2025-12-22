@@ -9,4 +9,5 @@ class ApiActions {
   static const car = 'services';
   static const concierge = 'concierge';
   static const about = 'about';
+  static const subscriptions = 'subscriptions';
 }

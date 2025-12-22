@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:the_pink_club/features/services/presentation/screens/home_screen.dart';
+import 'package:the_pink_club/core/theme/app_theme.dart';
+import 'package:the_pink_club/features/services/presentation/screens/splash_screen.dart';
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
@@ -12,8 +13,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'The Pink Club',
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
+      theme: AppTheme.lightTheme,
+      home: const SplashScreen(),
     );
   }
 }

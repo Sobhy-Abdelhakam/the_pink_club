@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:the_pink_club/core/theme/app_colors.dart';
 import 'package:the_pink_club/features/contact/presentation/providers/contact_provider.dart';
 
 class ContactScreen extends ConsumerStatefulWidget {
@@ -18,6 +20,15 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
   final messageCtrl = TextEditingController();
 
   @override
+  void dispose() {
+    nameCtrl.dispose();
+    emailCtrl.dispose();
+    phoneCtrl.dispose();
+    messageCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final contactState = ref.watch(contactProvider);
 
@@ -25,50 +36,121 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
       next.whenOrNull(
         data: (_) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Message sent successfully')),
+            const SnackBar(
+              content: Text('Your message has been received'),
+              backgroundColor: AppColors.success,
+              behavior: SnackBarBehavior.floating,
+            ),
           );
           _formKey.currentState?.reset();
+          Navigator.pop(context);
         },
         error: (e, _) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.toString())),
+            SnackBar(
+              content: Text(e.toString()),
+              backgroundColor: AppColors.error,
+              behavior: SnackBarBehavior.floating,
+            ),
           );
         },
       );
     });
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Contact Us')),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(20),
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: const Text('Contact Excellence'),
+        centerTitle: true,
+        titleTextStyle: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+          letterSpacing: 0.5,
+        ),
+      ),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _input(nameCtrl, 'Name'),
-            _input(emailCtrl, 'Email',
-                keyboard: TextInputType.emailAddress),
-            _input(phoneCtrl, 'Phone',
-                keyboard: TextInputType.phone),
-            _input(messageCtrl, 'Message', maxLines: 4),
+            const Text(
+              'Get in Touch',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+                letterSpacing: -0.8,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Our concierge team is here to assist you with any inquiries or bespoke requests.',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            
+            Row(
+              children: [
+                _buildContactInfoCard(Icons.email_outlined, 'Email', 'info@pink-club.com'),
+                const SizedBox(width: 16),
+                _buildContactInfoCard(Icons.phone_outlined, 'Phone', '+966 123 456 789'),
+              ],
+            ).animate().fadeIn(duration: 400.ms).moveY(begin: 10, end: 0),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
+            _buildForm(contactState.isLoading),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
 
-            ElevatedButton(
-              onPressed: contactState.isLoading
-                  ? null
-                  : () {
-                      if (_formKey.currentState!.validate()) {
-                        ref.read(contactProvider.notifier).send({
-                          'name': nameCtrl.text,
-                          'email': emailCtrl.text,
-                          'phone': phoneCtrl.text,
-                          'message': messageCtrl.text,
-                        });
-                      }
-                    },
-              child: contactState.isLoading
-                  ? const CircularProgressIndicator()
-                  : const Text('Send Message'),
+  Widget _buildContactInfoCard(IconData icon, String label, String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.divider),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(5),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: AppColors.primary, size: 24),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.textSecondary.withAlpha(150),
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -76,21 +158,94 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     );
   }
 
+  Widget _buildForm(bool isLoading) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _input(nameCtrl, 'Full Name', Icons.person_outline_rounded),
+          _input(emailCtrl, 'Email Address', Icons.email_outlined, keyboard: TextInputType.emailAddress),
+          _input(phoneCtrl, 'WhatsApp / Phone', Icons.phone_outlined, keyboard: TextInputType.phone),
+          _input(messageCtrl, 'Your Inquiry', Icons.chat_bubble_outline_rounded, maxLines: 5),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: isLoading
+                ? null
+                : () {
+                    if (_formKey.currentState!.validate()) {
+                      ref.read(contactProvider.notifier).send({
+                        'name': nameCtrl.text,
+                        'email': emailCtrl.text,
+                        'phone': phoneCtrl.text,
+                        'message': messageCtrl.text,
+                      });
+                    }
+                  },
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              backgroundColor: AppColors.primary,
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+            child: isLoading
+                ? const SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                  )
+                : const Text(
+                    'Transmit Message',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
+          ),
+        ],
+      ),
+    ).animate().fadeIn(delay: 200.ms, duration: 400.ms);
+  }
+
   Widget _input(
     TextEditingController controller,
-    String label, {
+    String label,
+    IconData icon, {
     TextInputType keyboard = TextInputType.text,
     int maxLines = 1,
   }) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: 20),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboard,
         maxLines: maxLines,
-        validator: (v) =>
-            v == null || v.isEmpty ? 'Required field' : null,
-        decoration: InputDecoration(labelText: label),
+        validator: (v) => v == null || v.isEmpty ? 'Field required' : null,
+        style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          prefixIcon: Padding(
+            padding: const EdgeInsets.only(bottom: 0),
+            child: Icon(icon, color: AppColors.primary.withAlpha(200), size: 20),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.divider),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.divider),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          alignLabelWithHint: true,
+        ),
       ),
     );
   }

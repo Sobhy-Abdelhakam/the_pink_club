@@ -9,8 +9,7 @@ class ServicesRepository {
 
   Future<List<ServiceModel>> fetchServices(String action) async {
     final response = await api.get(action);
-    return (response.data as List)
-        .map((e) => ServiceModel.fromJson(e))
-        .toList();
+    final data = response.data['data'] as List;
+    return data.map((e) => ServiceModel.fromJson(e)).toList();
   }
 }

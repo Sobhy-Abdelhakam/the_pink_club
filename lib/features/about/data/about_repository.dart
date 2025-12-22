@@ -9,6 +9,6 @@ class AboutRepository {
 
   Future<AboutModel> fetchAbout() async {
     final response = await api.get(ApiActions.about);
-    return AboutModel.fromJson(response.data);
+    return AboutModel.fromJson(response.data['data']);
   }
 }

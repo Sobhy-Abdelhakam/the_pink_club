@@ -9,8 +9,9 @@ class ProvidersRepository {
 
   Future<List<ProviderAdModel>> fetchProviders() async {
     final response = await _dio.get(_url);
+    final data = response.data is Map ? response.data['data'] as List : response.data as List;
 
-    return (response.data as List)
+    return data
         .map((e) => ProviderAdModel.fromJson(e))
         .toList();
   }

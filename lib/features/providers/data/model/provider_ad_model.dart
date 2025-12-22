@@ -20,6 +20,16 @@ class ProviderAdModel {
   });
 
   factory ProviderAdModel.fromJson(Map<String, dynamic> json) {
+    String imagePath = json['image'] ?? '';
+    if (imagePath.isNotEmpty && !imagePath.startsWith('http')) {
+      final cleanPath = imagePath.startsWith('/') ? imagePath : '/$imagePath';
+      if (cleanPath.startsWith('/admin/')) {
+        imagePath = 'https://thepinkclub.net$cleanPath';
+      } else {
+        imagePath = 'https://thepinkclub.net/admin$cleanPath';
+      }
+    }
+
     return ProviderAdModel(
       id: int.parse(json['id'].toString()),
       name: json['name'] ?? '',
@@ -28,7 +38,7 @@ class ProviderAdModel {
       shortDescEn: json['short_desc_en'] ?? '',
       details: json['details'] ?? '',
       detailsEn: json['details_en'] ?? '',
-      image: json['image'] ?? '',
+      image: imagePath,
     );
   }
 }
