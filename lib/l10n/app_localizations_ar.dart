@@ -27,7 +27,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get exclusiveOffering => 'عرض حصري';
 
   @override
-  String get premiumAssistance => 'المساعدة المتميزة';
+  String get premiumAssistance => 'الإنقاذ على الطريق';
 
   @override
   String get strategicAdvisory => 'استشارات استراتيجية';

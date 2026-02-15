@@ -17,14 +17,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
 
-  final List<Widget> _screens = [
-    const HomeScreen(),
-    const ProvidersScreen(),
-    const SubscriptionScreen(),
-    const ContactScreen(),
-    const AboutScreen(),
-  ];
-
   void _onItemTapped(int index) {
     if (_selectedIndex == index) return;
     setState(() {
@@ -32,15 +24,29 @@ class _MainScreenState extends State<MainScreen> {
     });
   }
 
+  Widget _getScreen(int index) {
+    switch (index) {
+      case 0:
+        return const HomeScreen();
+      case 1:
+        return const ProvidersScreen();
+      case 2:
+        return const SubscriptionScreen();
+      case 3:
+        return const ContactScreen();
+      case 4:
+        return const AboutScreen();
+      default:
+        return const HomeScreen();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: _getScreen(_selectedIndex),
       bottomNavigationBar: Container(
         height: 88,
         decoration: BoxDecoration(

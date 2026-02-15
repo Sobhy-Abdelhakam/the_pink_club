@@ -27,7 +27,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get exclusiveOffering => 'Exclusive Offering';
 
   @override
-  String get premiumAssistance => 'Premium Assistance';
+  String get premiumAssistance => 'Roadside';
 
   @override
   String get strategicAdvisory => 'Strategic Advisory';

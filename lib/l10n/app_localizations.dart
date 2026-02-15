@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumAssistance.
   ///
   /// In en, this message translates to:
-  /// **'Premium Assistance'**
+  /// **'Roadside'**
   String get premiumAssistance;
 
   /// No description provided for @strategicAdvisory.
