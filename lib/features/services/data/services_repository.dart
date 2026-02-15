@@ -15,7 +15,10 @@ class ServicesRepository {
     final cached = await cache.get<List>(cacheKey);
 
     if (cached != null) {
-      return cached.map((e) => ServiceModel.fromJson(e)).toList();
+      // Explicitly cast from dynamic to Map<String, dynamic>
+      return cached
+          .map((e) => ServiceModel.fromJson(Map<String, dynamic>.from(e as Map)))
+          .toList();
     }
 
     // Network fallback

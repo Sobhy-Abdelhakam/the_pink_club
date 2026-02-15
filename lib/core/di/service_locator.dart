@@ -32,10 +32,12 @@ Future<void> init() async {
   sl.registerLazySingleton(() => SubscriptionRepository(sl.get(), sl.get()));
   sl.registerLazySingleton(() => ProvidersRepository(sl.get()));
 
-  // Blocs/Cubits
+  // Blocs/Cubits - Singleton for state sharing
+  sl.registerLazySingleton(() => ServicesCubit(sl.get()));
+  
+  // Blocs/Cubits - Factory instances
   sl.registerFactory(() => AboutCubit(sl.get()));
   sl.registerFactory(() => ContactCubit(sl.get()));
-  sl.registerFactory(() => ServicesCubit(sl.get()));
   sl.registerFactory(() => SubscriptionCubit(sl.get()));
   sl.registerFactory(() => ProvidersCubit(sl.get()));
 }

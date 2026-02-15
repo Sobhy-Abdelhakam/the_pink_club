@@ -7,6 +7,7 @@ import 'package:the_pink_club/core/theme/app_theme.dart';
 import 'package:the_pink_club/features/about/presentation/providers/about_cubit.dart';
 import 'package:the_pink_club/features/contact/presentation/providers/contact_cubit.dart';
 import 'package:the_pink_club/features/providers/presentation/providers/providers_cubit.dart';
+import 'package:the_pink_club/features/services/presentation/providers/services_cubit.dart';
 import 'package:the_pink_club/features/services/presentation/screens/splash_screen.dart';
 import 'package:the_pink_club/features/subscription/presentation/providers/subscription_cubit.dart';
 import 'package:the_pink_club/l10n/app_localizations.dart';
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (context) => di.sl<LocaleCubit>()),
+        BlocProvider(create: (context) => di.sl<ServicesCubit>()),
         BlocProvider(create: (context) => di.sl<AboutCubit>()..fetchAbout()),
         BlocProvider(create: (context) => di.sl<ContactCubit>()),
         BlocProvider(create: (context) => di.sl<SubscriptionCubit>()),

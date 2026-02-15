@@ -16,7 +16,10 @@ class SubscriptionRepository {
     final cached = await cache.get<List>(_cacheKey);
 
     if (cached != null) {
-      return cached.map((json) => SubscriptionPackage.fromJson(json)).toList();
+      // Explicitly cast from dynamic to Map<String, dynamic>
+      return cached
+          .map((json) => SubscriptionPackage.fromJson(Map<String, dynamic>.from(json as Map)))
+          .toList();
     }
 
     // Network fallback

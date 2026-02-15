@@ -13,11 +13,15 @@ class ServicesInitial extends ServicesState {}
 class ServicesLoading extends ServicesState {}
 
 class ServicesLoaded extends ServicesState {
-  final List<ServiceModel> services;
-  const ServicesLoaded(this.services);
+  final Map<String, List<ServiceModel>> servicesMap;
+  const ServicesLoaded(this.servicesMap);
+
+  List<ServiceModel> getServices(String action) {
+    return servicesMap[action] ?? [];
+  }
 
   @override
-  List<Object?> get props => [services];
+  List<Object?> get props => [servicesMap];
 }
 
 class ServicesError extends ServicesState {
