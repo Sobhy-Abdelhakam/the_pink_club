@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildServiceSection(l10n.licenseServices, ApiActions.license),
           _buildServiceSection(l10n.secondOpinion, ApiActions.secondMedical),
           _buildServiceSection(l10n.exploreMore, ApiActions.more),
-          const SliverToBoxAdapter(child: SizedBox(height: 60)),
+          const SliverToBoxAdapter(child: SizedBox(height: 20)),
         ],
       ),
     );
