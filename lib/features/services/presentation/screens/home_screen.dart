@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       });
     }
-    
+
     context.read<ProvidersCubit>().fetchAds();
   }
 
@@ -151,22 +151,42 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       floating: true,
-      pinned: false,
-      backgroundColor: AppColors.background.withAlpha(240),
+      pinned: true,
+      backgroundColor: AppColors.background,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      centerTitle: true,
-      leadingWidth: 100,
-      leading: const Center(child: LanguageSwitcher()),
-      title: Text(
-        AppLocalizations.of(context)!.appTitle.toUpperCase(),
-        style: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 2.0,
-          color: AppColors.textPrimary.withAlpha(180),
-        ),
+      centerTitle: false,
+      leadingWidth: 0,
+      leading: const SizedBox.shrink(),
+      title: Row(
+        children: [_buildUserInfo(), const Spacer(), const LanguageSwitcher()],
       ),
+    );
+  }
+
+  Widget _buildUserInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.appTitle.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1.5,
+            color: AppColors.primary,
+          ),
+        ),
+        const SizedBox(height: 2),
+        const Text(
+          "Welcome back, Queen",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      ],
     );
   }
 
@@ -180,58 +200,70 @@ class _HomeScreenState extends State<HomeScreen> {
       child: BlocBuilder<ServicesCubit, ServicesState>(
         builder: (context, state) {
           if (state is ServicesLoading) {
-              // We could return a shimmer or empty, usually better to stay empty to avoid jumpiness
-              return const SliverToBoxAdapter(child: SizedBox.shrink());
+            return const SliverToBoxAdapter(child: SizedBox.shrink());
           } else if (state is ServicesLoaded) {
             final services = state.services;
-            if (services.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
+            if (services.isEmpty) {
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
+            }
 
             return SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsetsDirectional.fromSTEB(28, 32, 28, 16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textPrimary,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {},
-                          child: Text(
-                            AppLocalizations.of(context)!.viewAll,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.primary.withAlpha(200),
-                              letterSpacing: 0.2,
+              child: Container(
+                margin: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: services.first.brandColor.withAlpha(5),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsetsDirectional.fromSTEB(
+                        24,
+                        0,
+                        24,
+                        20,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 4,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              color: services.first.brandColor,
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
+                          const SizedBox(width: 12),
+                          Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.textPrimary,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 200,
+                      child: ListView.separated(
+                        padding: const EdgeInsetsDirectional.symmetric(
+                          horizontal: 24,
                         ),
-                      ],
+                        scrollDirection: Axis.horizontal,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: services.length,
+                        separatorBuilder: (context, index) =>
+                            const SizedBox(width: 8),
+                        itemBuilder: (context, index) =>
+                            ServiceCard(service: services[index]),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 172,
-                    child: ListView.separated(
-                      padding: const EdgeInsetsDirectional.symmetric(horizontal: 28),
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: services.length,
-                      separatorBuilder: (context, index) => const SizedBox(width: 16),
-                      itemBuilder: (context, index) => ServiceCard(service: services[index]),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }

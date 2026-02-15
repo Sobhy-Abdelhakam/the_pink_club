@@ -34,9 +34,9 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
             return _buildAdItem(ad);
           },
           options: CarouselOptions(
-            height: 200,
+            height: 240,
             viewportFraction: 1,
-            enlargeCenterPage: true,
+            enlargeCenterPage: false,
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 5),
             onPageChanged: (index, reason) {
@@ -46,7 +46,7 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
             },
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 4),
         AnimatedIndicator(activeIndex: _activeIndex, count: widget.ads.length),
       ],
     );
@@ -63,90 +63,76 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
         );
       },
       child: Container(
-        margin: const EdgeInsetsDirectional.symmetric(vertical: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         decoration: BoxDecoration(
-          border: Border.all(
-            color: AppColors.divider.withAlpha(100),
-            width: 1.0,
-          ),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withAlpha(12),
-              blurRadius: 25,
-              offset: const Offset(0, 10),
+              color: Colors.black.withAlpha(20),
+              blurRadius: 30,
+              offset: const Offset(0, 12),
             ),
           ],
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(24),
           child: Stack(
             children: [
-              // Background Image
               CachedNetworkImage(
                 imageUrl: ad.image,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
                 placeholder: (context, url) => Container(
-                  color: AppColors.divider.withAlpha(50),
+                  color: AppColors.surfaceVariant,
                   child: const Center(
-                    child: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   ),
                 ),
                 errorWidget: (context, url, error) => Container(
-                  color: AppColors.divider.withAlpha(50),
-                  child: const Icon(
-                    Icons.business_rounded,
-                    color: AppColors.textSecondary,
-                    size: 28,
-                  ),
+                  color: AppColors.surfaceVariant,
+                  child: const Icon(Icons.broken_image_rounded, size: 32, color: AppColors.textSecondary),
                 ),
               ),
-              // Gradient Overlay (More subtle & sophisticated)
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: AlignmentDirectional.bottomCenter,
-                    end: AlignmentDirectional.topCenter,
-                    stops: const [0.0, 0.45, 1.0],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
                     colors: [
-                      Colors.black.withAlpha(180),
-                      Colors.black.withAlpha(40),
+                      Colors.black.withAlpha(200),
+                      Colors.black.withAlpha(80),
                       Colors.transparent,
                     ],
                   ),
                 ),
               ),
-              // Text Content
-              Padding(
-                padding: const EdgeInsets.all(20),
+              Positioned(
+                bottom: 24,
+                left: 24,
+                right: 24,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      ad.name,
+                      ad.name.toUpperCase(),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.5,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 1.2,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       ad.shortDesc,
-                      style: TextStyle(
-                        color: Colors.white.withAlpha(220),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: 0.1,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        height: 1.2,
                       ),
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
