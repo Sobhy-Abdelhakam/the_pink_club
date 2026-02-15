@@ -499,6 +499,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bespoke Partners'**
   String get bespokePartners;
+
+  /// No description provided for @chooseYourPlan.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Plan'**
+  String get chooseYourPlan;
+
+  /// No description provided for @subscribeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe Now'**
+  String get subscribeNow;
+
+  /// No description provided for @showMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Show More'**
+  String get showMore;
+
+  /// No description provided for @showLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Less'**
+  String get showLess;
+
+  /// No description provided for @retry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// No description provided for @noPackagesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No packages available'**
+  String get noPackagesAvailable;
+
+  /// No description provided for @networkError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error: Please check your internet connection'**
+  String get networkError;
+
+  /// No description provided for @requestTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Request timeout: Please try again'**
+  String get requestTimeout;
+
+  /// No description provided for @invalidDataFormat.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid data format from server'**
+  String get invalidDataFormat;
+
+  /// No description provided for @failedLoadPackages.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load packages'**
+  String get failedLoadPackages;
 }
 
 class _AppLocalizationsDelegate

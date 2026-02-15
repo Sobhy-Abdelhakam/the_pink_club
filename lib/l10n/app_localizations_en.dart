@@ -213,4 +213,35 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bespokePartners => 'Bespoke Partners';
+
+  @override
+  String get chooseYourPlan => 'Choose Your Plan';
+
+  @override
+  String get subscribeNow => 'Subscribe Now';
+
+  @override
+  String get showMore => 'Show More';
+
+  @override
+  String get showLess => 'Show Less';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get noPackagesAvailable => 'No packages available';
+
+  @override
+  String get networkError =>
+      'Network error: Please check your internet connection';
+
+  @override
+  String get requestTimeout => 'Request timeout: Please try again';
+
+  @override
+  String get invalidDataFormat => 'Invalid data format from server';
+
+  @override
+  String get failedLoadPackages => 'Failed to load packages';
 }

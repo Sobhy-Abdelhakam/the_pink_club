@@ -69,5 +69,15 @@
   "navMembership": "MEMBERSHIP",
   "navConcierge": "CONCIERGE",
   "navIdentity": "IDENTITY",
-  "bespokePartners": "Bespoke Partners"
+  "bespokePartners": "Bespoke Partners",
+  "chooseYourPlan": "Choose Your Plan",
+  "subscribeNow": "Subscribe Now",
+  "showMore": "Show More",
+  "showLess": "Show Less",
+  "retry": "Retry",
+  "noPackagesAvailable": "No packages available",
+  "networkError": "Network error: Please check your internet connection",
+  "requestTimeout": "Request timeout: Please try again",
+  "invalidDataFormat": "Invalid data format from server",
+  "failedLoadPackages": "Failed to load packages"
 }

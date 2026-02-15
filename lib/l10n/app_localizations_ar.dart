@@ -210,4 +210,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bespokePartners => 'الشركاء المختارون';
+
+  @override
+  String get chooseYourPlan => 'اختر خطتك';
+
+  @override
+  String get subscribeNow => 'اشترك الآن';
+
+  @override
+  String get showMore => 'عرض المزيد';
+
+  @override
+  String get showLess => 'عرض أقل';
+
+  @override
+  String get retry => 'حاول مرة أخرى';
+
+  @override
+  String get noPackagesAvailable => 'لا توجد باقات متاحة';
+
+  @override
+  String get networkError => 'خطأ في الشبكة: يرجى التحقق من اتصالك بالإنترنت';
+
+  @override
+  String get requestTimeout => 'انتهت مهلة الطلب: يرجى المحاولة مرة أخرى';
+
+  @override
+  String get invalidDataFormat => 'صيغة بيانات غير صحيحة من الخادم';
+
+  @override
+  String get failedLoadPackages => 'فشل تحميل الباقات';
 }

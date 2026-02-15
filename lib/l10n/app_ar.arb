@@ -66,5 +66,15 @@
   "navMembership": "العضوية",
   "navConcierge": "الكونسيرج",
   "navIdentity": "الهوية",
-  "bespokePartners": "الشركاء المختارون"
+  "bespokePartners": "الشركاء المختارون",
+  "chooseYourPlan": "اختر خطتك",
+  "subscribeNow": "اشترك الآن",
+  "showMore": "عرض المزيد",
+  "showLess": "عرض أقل",
+  "retry": "حاول مرة أخرى",
+  "noPackagesAvailable": "لا توجد باقات متاحة",
+  "networkError": "خطأ في الشبكة: يرجى التحقق من اتصالك بالإنترنت",
+  "requestTimeout": "انتهت مهلة الطلب: يرجى المحاولة مرة أخرى",
+  "invalidDataFormat": "صيغة بيانات غير صحيحة من الخادم",
+  "failedLoadPackages": "فشل تحميل الباقات"
 }
