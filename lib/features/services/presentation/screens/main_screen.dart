@@ -15,16 +15,28 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
+  late List<bool> _visited;
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _visited = List.generate(5, (index) => index == 0);
+  }
 
   void _onItemTapped(int index) {
     if (_selectedIndex == index) return;
     setState(() {
       _selectedIndex = index;
+      _visited[index] = true;
     });
   }
 
-  Widget _getScreen(int index) {
+  Widget _buildLazyScreen(int index) {
+    if (!_visited[index]) {
+      return const SizedBox.shrink();
+    }
+
     switch (index) {
       case 0:
         return const HomeScreen();
@@ -46,7 +58,10 @@ class _MainScreenState extends State<MainScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      body: _getScreen(_selectedIndex),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: List.generate(5, (index) => _buildLazyScreen(index)),
+      ),
       bottomNavigationBar: Container(
         height: 88,
         decoration: BoxDecoration(
