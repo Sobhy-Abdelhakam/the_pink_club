@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:the_pink_club/core/cache/cache_service.dart';
 import 'package:the_pink_club/core/network/api_client.dart';
 import 'package:the_pink_club/core/providers/locale_cubit.dart';
 import 'package:the_pink_club/features/about/data/about_repository.dart';
@@ -15,16 +16,21 @@ import 'package:the_pink_club/features/providers/presentation/providers/provider
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // Core
+  // Core - Cache Service
+  final cacheService = HiveCacheService();
+  await cacheService.init();
+  sl.registerLazySingleton<CacheService>(() => cacheService);
+
+  // Core - Other Services
   sl.registerLazySingleton(() => LocaleCubit());
   sl.registerLazySingleton(() => ApiClient());
 
   // Repositories
-  sl.registerLazySingleton(() => AboutRepository(sl.get()));
+  sl.registerLazySingleton(() => AboutRepository(sl.get(), sl.get()));
   sl.registerLazySingleton(() => ContactRepository(sl.get()));
-  sl.registerLazySingleton(() => ServicesRepository(sl.get()));
-  sl.registerLazySingleton(() => SubscriptionRepository(sl.get()));
-  sl.registerLazySingleton(() => ProvidersRepository());
+  sl.registerLazySingleton(() => ServicesRepository(sl.get(), sl.get()));
+  sl.registerLazySingleton(() => SubscriptionRepository(sl.get(), sl.get()));
+  sl.registerLazySingleton(() => ProvidersRepository(sl.get()));
 
   // Blocs/Cubits
   sl.registerFactory(() => AboutCubit(sl.get()));
