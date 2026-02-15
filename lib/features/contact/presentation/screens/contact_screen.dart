@@ -70,7 +70,10 @@ class _ContactScreenState extends State<ContactScreen> {
         ),
         body: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 20),
+          padding: const EdgeInsetsDirectional.symmetric(
+            horizontal: 24,
+            vertical: 20,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -93,12 +96,20 @@ class _ContactScreenState extends State<ContactScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               Row(
                 children: [
-                  _buildContactInfoCard(Icons.email_outlined, 'Email', 'info@pink-club.com'),
+                  _buildContactInfoCard(
+                    Icons.email_outlined,
+                    'Email',
+                    'info@thepinkclub.net',
+                  ),
                   const SizedBox(width: 16),
-                  _buildContactInfoCard(Icons.phone_outlined, 'Phone', '+966 123 456 789'),
+                  _buildContactInfoCard(
+                    Icons.phone_outlined,
+                    'Phone',
+                    '+01000039026',
+                  ),
                 ],
               ).animate().fadeIn(duration: 400.ms).moveY(begin: 10, end: 0),
 
@@ -167,10 +178,33 @@ class _ContactScreenState extends State<ContactScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _input(nameCtrl, l10n.fullName, Icons.person_outline_rounded, l10n),
-              _input(emailCtrl, l10n.emailAddress, Icons.email_outlined, l10n, keyboard: TextInputType.emailAddress),
-              _input(phoneCtrl, l10n.phoneWhatsApp, Icons.phone_outlined, l10n, keyboard: TextInputType.phone),
-              _input(messageCtrl, l10n.yourInquiry, Icons.chat_bubble_outline_rounded, l10n, maxLines: 5),
+              _input(
+                nameCtrl,
+                l10n.fullName,
+                Icons.person_outline_rounded,
+                l10n,
+              ),
+              _input(
+                emailCtrl,
+                l10n.emailAddress,
+                Icons.email_outlined,
+                l10n,
+                keyboard: TextInputType.emailAddress,
+              ),
+              _input(
+                phoneCtrl,
+                l10n.phoneWhatsApp,
+                Icons.phone_outlined,
+                l10n,
+                keyboard: TextInputType.phone,
+              ),
+              _input(
+                messageCtrl,
+                l10n.yourInquiry,
+                Icons.chat_bubble_outline_rounded,
+                l10n,
+                maxLines: 5,
+              ),
               const SizedBox(height: 12),
               ElevatedButton(
                 onPressed: isLoading
@@ -198,11 +232,17 @@ class _ContactScreenState extends State<ContactScreen> {
                     ? const SizedBox(
                         height: 20,
                         width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
                       )
                     : Text(
                         l10n.transmitMessage,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
               ),
             ],
@@ -230,10 +270,17 @@ class _ContactScreenState extends State<ContactScreen> {
         style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          labelStyle: const TextStyle(
+            fontSize: 13,
+            color: AppColors.textSecondary,
+          ),
           prefixIcon: Padding(
             padding: const EdgeInsets.only(bottom: 0),
-            child: Icon(icon, color: AppColors.primary.withAlpha(200), size: 20),
+            child: Icon(
+              icon,
+              color: AppColors.primary.withAlpha(200),
+              size: 20,
+            ),
           ),
           filled: true,
           fillColor: Colors.white,
@@ -249,7 +296,10 @@ class _ContactScreenState extends State<ContactScreen> {
             borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 18,
+          ),
           alignLabelWithHint: true,
         ),
       ),
