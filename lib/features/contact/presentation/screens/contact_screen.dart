@@ -44,8 +44,12 @@ class _ContactScreenState extends State<ContactScreen> {
               behavior: SnackBarBehavior.floating,
             ),
           );
+          // Clear form fields
+          nameCtrl.clear();
+          emailCtrl.clear();
+          phoneCtrl.clear();
+          messageCtrl.clear();
           _formKey.currentState?.reset();
-          Navigator.pop(context);
         } else if (state is ContactError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
