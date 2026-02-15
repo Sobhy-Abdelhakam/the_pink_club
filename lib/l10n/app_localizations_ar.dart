@@ -203,13 +203,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get navMembership => 'العضوية';
 
   @override
-  String get navConcierge => 'الكونسيرج';
+  String get navContact => 'اتصل بنا';
 
   @override
   String get navIdentity => 'الهوية';
 
   @override
   String get bespokePartners => 'الشركاء المختارون';
+
+  @override
+  String get contactNotFound => 'معلومات الاتصال غير متاحة';
 
   @override
   String get chooseYourPlan => 'اختر خطتك';

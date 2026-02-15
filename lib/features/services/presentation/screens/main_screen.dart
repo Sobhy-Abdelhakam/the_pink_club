@@ -113,8 +113,8 @@ class _MainScreenState extends State<MainScreen> {
               label: l10n.navMembership,
             ),
             BottomNavigationBarItem(
-              icon: const Icon(Icons.support_agent_rounded, size: 20),
-              label: l10n.navConcierge,
+              icon: const Icon(Icons.email_rounded, size: 20),
+              label: l10n.navContact,
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.info_rounded, size: 20),

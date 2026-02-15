@@ -206,13 +206,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navMembership => 'MEMBERSHIP';
 
   @override
-  String get navConcierge => 'CONCIERGE';
+  String get navContact => 'CONTACT';
 
   @override
   String get navIdentity => 'IDENTITY';
 
   @override
   String get bespokePartners => 'Bespoke Partners';
+
+  @override
+  String get contactNotFound => 'Contact information not found';
 
   @override
   String get chooseYourPlan => 'Choose Your Plan';

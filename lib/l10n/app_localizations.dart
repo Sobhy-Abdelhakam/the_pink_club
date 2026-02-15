@@ -482,11 +482,11 @@ abstract class AppLocalizations {
   /// **'MEMBERSHIP'**
   String get navMembership;
 
-  /// No description provided for @navConcierge.
+  /// No description provided for @navContact.
   ///
   /// In en, this message translates to:
-  /// **'CONCIERGE'**
-  String get navConcierge;
+  /// **'CONTACT'**
+  String get navContact;
 
   /// No description provided for @navIdentity.
   ///
@@ -499,6 +499,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Bespoke Partners'**
   String get bespokePartners;
+
+  /// No description provided for @contactNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact information not found'**
+  String get contactNotFound;
 
   /// No description provided for @chooseYourPlan.
   ///
