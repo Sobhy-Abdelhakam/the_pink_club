@@ -32,45 +32,43 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: AppColors.primary,
       body: Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: AppColors.primaryGradient,
-        ),
+        decoration: const BoxDecoration(gradient: AppColors.primaryGradient),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Logo Placeholder - Using an Icon for now
             Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(25),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(25),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: const Icon(
-                Icons.favorite_rounded,
-                size: 80,
-                color: AppColors.primary,
-              ),
-            )
+                  child: Image.asset(
+                    'assets/images/logo.jpg', // استبدل هذا بمسار الصورة الخاص بك
+                    width: 150,
+                    height: 150,
+                  ),
+                )
                 .animate()
                 .fadeIn(duration: 800.ms)
                 .scale(duration: 800.ms, curve: Curves.easeOutBack),
             const SizedBox(height: 24),
             const Text(
-              'The Pink Club',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-              ),
-            )
+                  'The Pink Club',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                )
                 .animate()
                 .fadeIn(delay: 400.ms, duration: 800.ms)
                 .slideY(begin: 0.3, end: 0, curve: Curves.easeOutBack),

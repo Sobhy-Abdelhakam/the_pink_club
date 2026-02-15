@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:the_pink_club/core/network/api_actions.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
 import 'package:the_pink_club/features/providers/presentation/providers/providers_provider.dart';
@@ -9,35 +10,109 @@ import 'package:the_pink_club/features/services/presentation/widgets/service_car
 import 'package:the_pink_club/core/widgets/language_switcher.dart';
 import 'package:the_pink_club/l10n/app_localizations.dart';
 
-class HomeScreen extends ConsumerWidget {
+/// Provider to track which sections should load their data
+final sectionLoadVisibilityProvider = StateProvider<Set<String>>((ref) => {});
+
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final adsAsync = ref.watch(providersAdsProvider);
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+
+    // Start scheduling loads after UI is settled (500ms delay)
+    // This prevents blocking the first frame render
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scheduleLoads();
+    });
+  }
+
+  void _scheduleLoads() {
+    final sections = [
+      ApiActions.car, // Premium Assistance
+      ApiActions.advisory,
+      ApiActions.medicalServices,
+      ApiActions.medical,
+      ApiActions.concierge,
+      ApiActions.automotive,
+      ApiActions.license,
+      ApiActions.secondMedical,
+      ApiActions.more,
+    ];
+
+    // Aggressive staggering: 1200ms initial delay + 400ms between sections
+    // This ensures minimal concurrent requests and zero main thread blocking
+    for (int i = 0; i < sections.length; i++) {
+      Future.delayed(Duration(milliseconds: 1200 + (i * 400)), () {
+        if (mounted) {
+          // Use microtask to defer state update to next event loop cycle
+          Future.microtask(() {
+            if (mounted) {
+              ref.read(sectionLoadVisibilityProvider.notifier).state = {
+                ...ref.read(sectionLoadVisibilityProvider),
+                sections[i],
+              };
+            }
+          });
+        }
+      });
+    }
+  }
+
+  void _onScroll() {
+    // Trigger loading of sections as user scrolls near them
+    final offset = _scrollController.offset;
+    final sectionHeight = 250.0;
+
+    if (offset > sectionHeight * 2) {
+      _loadSection(ApiActions.advisory);
+    }
+    if (offset > sectionHeight * 4) {
+      _loadSection(ApiActions.medicalServices);
+      _loadSection(ApiActions.medical);
+    }
+  }
+
+  void _loadSection(String action) {
+    final loadedSections = ref.read(sectionLoadVisibilityProvider);
+    if (!loadedSections.contains(action)) {
+      ref.read(sectionLoadVisibilityProvider.notifier).state = {
+        ...loadedSections,
+        action,
+      };
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
+        controller: _scrollController,
         physics: const BouncingScrollPhysics(),
         slivers: [
           _buildAppBar(context),
 
-          // Ads Section
-          SliverToBoxAdapter(
-            child: adsAsync.when(
-              loading: () => const SizedBox(
-                height: 200,
-                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-              ),
-              error: (context, error) => const SizedBox.shrink(),
-              data: (ads) => Padding(
-                padding: const EdgeInsetsDirectional.only(top: 12, bottom: 28),
-                child: AdsCarouselWidget(ads: ads),
-              ),
-            ),
-          ),
+          // Ads Section (Lazy loaded)
+          _buildAdsSection(ref),
 
           // Sections
           _buildServiceSection(ref, l10n.premiumAssistance, ApiActions.car),
@@ -72,6 +147,40 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
+  Widget _buildAdsSection(WidgetRef ref) {
+    final loadedSections = ref.watch(sectionLoadVisibilityProvider);
+
+    // Only load ads when first section is marked as ready
+    if (!loadedSections.contains(ApiActions.car)) {
+      return SliverToBoxAdapter(
+        child: SizedBox(
+          height: 200,
+          child: Center(
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              color: AppColors.primary.withAlpha(100),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final adsAsync = ref.watch(providersAdsProvider);
+    return SliverToBoxAdapter(
+      child: adsAsync.when(
+        loading: () => const SizedBox(
+          height: 200,
+          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+        ),
+        error: (context, error) => const SizedBox.shrink(),
+        data: (ads) => Padding(
+          padding: const EdgeInsetsDirectional.only(top: 12, bottom: 28),
+          child: AdsCarouselWidget(ads: ads),
+        ),
+      ),
+    );
+  }
+
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       floating: true,
@@ -91,19 +200,27 @@ class HomeScreen extends ConsumerWidget {
           color: AppColors.textPrimary.withAlpha(180),
         ),
       ),
-      actions: [
-        Padding(
-          padding: const EdgeInsetsDirectional.only(end: 12),
-          child: IconButton(
-            icon: const Icon(Icons.notifications_outlined, size: 24),
-            onPressed: () {},
-          ),
-        ),
-      ],
+      // actions: [
+      //   Padding(
+      //     padding: const EdgeInsetsDirectional.only(end: 12),
+      //     child: IconButton(
+      //       icon: const Icon(Icons.notifications_outlined, size: 24),
+      //       onPressed: () {},
+      //     ),
+      //   ),
+      // ],
     );
   }
 
   Widget _buildServiceSection(WidgetRef ref, String title, String action) {
+    final loadedSections = ref.watch(sectionLoadVisibilityProvider);
+    final shouldLoad = loadedSections.contains(action);
+
+    // Don't load data unless the section is marked as visible
+    if (!shouldLoad) {
+      return const SliverToBoxAdapter(child: SizedBox.shrink());
+    }
+
     final servicesAsync = ref.watch(servicesProvider(action));
 
     return servicesAsync.when(
