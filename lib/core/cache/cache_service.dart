@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:hive_flutter/hive_flutter.dart';
 
 /// Cache metadata for tracking expiration
@@ -56,71 +57,73 @@ class HiveCacheService implements CacheService {
 
   @override
   Future<void> put<T>(String key, T value, {Duration? ttl}) async {
-    await _cacheBox?.put(key, value);
+    try {
+      await _cacheBox?.put(key, value);
 
-    // Store metadata
-    final metadata = CacheMetadata(
-      cachedAt: DateTime.now(),
-      ttl: ttl,
-    );
-    await _metadataBox?.put(key, _encodeMetadata(metadata));
+      // Store metadata
+      final metadata = CacheMetadata(
+        cachedAt: DateTime.now(),
+        ttl: ttl,
+      );
+      await _metadataBox?.put(key, jsonEncode(metadata.toJson()));
+    } catch (e) {
+      // Silently fail cache writes, don't block app
+      print('Cache write error: $e');
+    }
   }
 
   @override
   Future<T?> get<T>(String key) async {
-    // Check if cache exists
-    if (!(_cacheBox?.containsKey(key) ?? false)) {
-      return null;
-    }
-
-    // Check metadata for expiration
-    final metadataJson = _metadataBox?.get(key);
-    if (metadataJson != null) {
-      final metadata = _decodeMetadata(metadataJson);
-      if (metadata.isExpired) {
-        await delete(key);
+    try {
+      // Check if cache exists
+      if (!(_cacheBox?.containsKey(key) ?? false)) {
         return null;
       }
-    }
 
-    return _cacheBox?.get(key) as T?;
+      // Check metadata for expiration
+      final metadataJson = _metadataBox?.get(key);
+      if (metadataJson != null) {
+        try {
+          final metadata = CacheMetadata.fromJson(
+            jsonDecode(metadataJson) as Map<String, dynamic>,
+          );
+          if (metadata.isExpired) {
+            await delete(key);
+            return null;
+          }
+        } catch (e) {
+          // If metadata is corrupted, delete and return null
+          print('Cache metadata error: $e');
+          await delete(key);
+          return null;
+        }
+      }
+
+      return _cacheBox?.get(key) as T?;
+    } catch (e) {
+      // On any cache read error, return null to trigger network fetch
+      print('Cache read error: $e');
+      return null;
+    }
   }
 
   @override
   Future<void> delete(String key) async {
-    await _cacheBox?.delete(key);
-    await _metadataBox?.delete(key);
+    try {
+      await _cacheBox?.delete(key);
+      await _metadataBox?.delete(key);
+    } catch (e) {
+      print('Cache delete error: $e');
+    }
   }
 
   @override
   Future<void> clear() async {
-    await _cacheBox?.clear();
-    await _metadataBox?.clear();
-  }
-
-  String _encodeMetadata(CacheMetadata metadata) {
-    return metadata.toJson().toString();
-  }
-
-  CacheMetadata _decodeMetadata(String json) {
-    // Simple string-to-map parsing for our basic needs
-    final parts = json.replaceAll('{', '').replaceAll('}', '').split(',');
-    final Map<String, dynamic> map = {};
-
-    for (var part in parts) {
-      final keyValue = part.split(':');
-      if (keyValue.length == 2) {
-        final key = keyValue[0].trim().replaceAll("'", '');
-        var value = keyValue[1].trim().replaceAll("'", '');
-        
-        if (key == 'ttl' && value != 'null') {
-          map[key] = int.tryParse(value);
-        } else if (key == 'cachedAt') {
-          map[key] = value;
-        }
-      }
+    try {
+      await _cacheBox?.clear();
+      await _metadataBox?.clear();
+    } catch (e) {
+      print('Cache clear error: $e');
     }
-
-    return CacheMetadata.fromJson(map);
   }
 }

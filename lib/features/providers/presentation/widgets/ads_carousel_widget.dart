@@ -80,7 +80,7 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
             children: [
               CachedNetworkImage(
                 imageUrl: ad.image,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
                 width: double.infinity,
                 height: double.infinity,
                 placeholder: (context, url) => Container(
@@ -91,7 +91,11 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
                 ),
                 errorWidget: (context, url, error) => Container(
                   color: AppColors.surfaceVariant,
-                  child: const Icon(Icons.broken_image_rounded, size: 32, color: AppColors.textSecondary),
+                  child: const Icon(
+                    Icons.broken_image_rounded,
+                    size: 32,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ),
               Container(
