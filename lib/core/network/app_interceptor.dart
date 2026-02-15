@@ -1,19 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:the_pink_club/core/providers/locale_provider.dart';
+import 'package:the_pink_club/core/di/service_locator.dart';
+import 'package:the_pink_club/core/providers/locale_cubit.dart';
 
 class AppInterceptor extends Interceptor {
-  final Ref ref;
-
-  AppInterceptor(this.ref);
+  AppInterceptor();
 
   @override
   void onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) {
-    final locale = ref.read(localeProvider);
+    final locale = sl<LocaleCubit>().state;
     
     // Common headers
     options.headers.addAll({

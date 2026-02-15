@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
-import 'package:the_pink_club/features/contact/presentation/providers/contact_provider.dart';
+import 'package:the_pink_club/features/contact/presentation/providers/contact_cubit.dart';
+import 'package:the_pink_club/features/contact/presentation/providers/contact_state.dart';
 import 'package:the_pink_club/l10n/app_localizations.dart';
 
-class ContactScreen extends ConsumerStatefulWidget {
+class ContactScreen extends StatefulWidget {
   const ContactScreen({super.key});
 
   @override
-  ConsumerState<ContactScreen> createState() => _ContactScreenState();
+  State<ContactScreen> createState() => _ContactScreenState();
 }
 
-class _ContactScreenState extends ConsumerState<ContactScreen> {
+class _ContactScreenState extends State<ContactScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final nameCtrl = TextEditingController();
@@ -31,12 +32,11 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final contactState = ref.watch(contactProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    ref.listen(contactProvider, (prev, next) {
-      next.whenOrNull(
-        data: (_) {
+    return BlocListener<ContactCubit, ContactState>(
+      listener: (context, state) {
+        if (state is ContactSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.messageReceived),
@@ -46,69 +46,67 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
           );
           _formKey.currentState?.reset();
           Navigator.pop(context);
-        },
-        error: (e, _) {
+        } else if (state is ContactError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(e.toString()),
+              content: Text(state.message),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
             ),
           );
-        },
-      );
-    });
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(l10n.contactExcellence),
-        centerTitle: true,
-        titleTextStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-          letterSpacing: 0.5,
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: Text(l10n.contactExcellence),
+          centerTitle: true,
+          titleTextStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+            letterSpacing: 0.5,
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              l10n.getInTouch,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-                letterSpacing: -0.8,
+        body: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.getInTouch,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.8,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.contactSupportDesc,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-                height: 1.5,
+              const SizedBox(height: 8),
+              Text(
+                l10n.contactSupportDesc,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary,
+                  height: 1.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-            
-            Row(
-              children: [
-                _buildContactInfoCard(Icons.email_outlined, 'Email', 'info@pink-club.com'),
-                const SizedBox(width: 16),
-                _buildContactInfoCard(Icons.phone_outlined, 'Phone', '+966 123 456 789'),
-              ],
-            ).animate().fadeIn(duration: 400.ms).moveY(begin: 10, end: 0),
+              const SizedBox(height: 32),
+              
+              Row(
+                children: [
+                  _buildContactInfoCard(Icons.email_outlined, 'Email', 'info@pink-club.com'),
+                  const SizedBox(width: 16),
+                  _buildContactInfoCard(Icons.phone_outlined, 'Phone', '+966 123 456 789'),
+                ],
+              ).animate().fadeIn(duration: 400.ms).moveY(begin: 10, end: 0),
 
-            const SizedBox(height: 40),
-            _buildForm(contactState.isLoading, l10n),
-            const SizedBox(height: 40),
-          ],
+              const SizedBox(height: 40),
+              _buildForm(l10n),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
@@ -160,53 +158,58 @@ class _ContactScreenState extends ConsumerState<ContactScreen> {
     );
   }
 
-  Widget _buildForm(bool isLoading, AppLocalizations l10n) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _input(nameCtrl, l10n.fullName, Icons.person_outline_rounded, l10n),
-          _input(emailCtrl, l10n.emailAddress, Icons.email_outlined, l10n, keyboard: TextInputType.emailAddress),
-          _input(phoneCtrl, l10n.phoneWhatsApp, Icons.phone_outlined, l10n, keyboard: TextInputType.phone),
-          _input(messageCtrl, l10n.yourInquiry, Icons.chat_bubble_outline_rounded, l10n, maxLines: 5),
-          const SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: isLoading
-                ? null
-                : () {
-                    if (_formKey.currentState!.validate()) {
-                      ref.read(contactProvider.notifier).send({
-                        'name': nameCtrl.text,
-                        'email': emailCtrl.text,
-                        'phone': phoneCtrl.text,
-                        'message': messageCtrl.text,
-                      });
-                    }
-                  },
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-            ),
-            child: isLoading
-                ? const SizedBox(
-                    height: 20,
-                    width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                  )
-                : Text(
-                    l10n.transmitMessage,
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  Widget _buildForm(AppLocalizations l10n) {
+    return BlocBuilder<ContactCubit, ContactState>(
+      builder: (context, state) {
+        final isLoading = state is ContactLoading;
+        return Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _input(nameCtrl, l10n.fullName, Icons.person_outline_rounded, l10n),
+              _input(emailCtrl, l10n.emailAddress, Icons.email_outlined, l10n, keyboard: TextInputType.emailAddress),
+              _input(phoneCtrl, l10n.phoneWhatsApp, Icons.phone_outlined, l10n, keyboard: TextInputType.phone),
+              _input(messageCtrl, l10n.yourInquiry, Icons.chat_bubble_outline_rounded, l10n, maxLines: 5),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: isLoading
+                    ? null
+                    : () {
+                        if (_formKey.currentState!.validate()) {
+                          context.read<ContactCubit>().sendContact({
+                            'name': nameCtrl.text,
+                            'email': emailCtrl.text,
+                            'phone': phoneCtrl.text,
+                            'message': messageCtrl.text,
+                          });
+                        }
+                      },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
                   ),
+                ),
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
+                    : Text(
+                        l10n.transmitMessage,
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
+              ),
+            ],
           ),
-        ],
-      ),
-    ).animate().fadeIn(delay: 200.ms, duration: 400.ms);
+        ).animate().fadeIn(delay: 200.ms, duration: 400.ms);
+      },
+    );
   }
 
   Widget _input(

@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_pink_club/core/di/service_locator.dart';
 import 'package:the_pink_club/core/network/api_actions.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
-import 'package:the_pink_club/features/providers/presentation/providers/providers_provider.dart';
+import 'package:the_pink_club/features/providers/presentation/providers/providers_cubit.dart';
+import 'package:the_pink_club/features/providers/presentation/providers/providers_state.dart';
 import 'package:the_pink_club/features/providers/presentation/widgets/ads_carousel_widget.dart';
-import 'package:the_pink_club/features/services/presentation/providers/services_provider.dart';
+import 'package:the_pink_club/features/services/presentation/providers/services_cubit.dart';
+import 'package:the_pink_club/features/services/presentation/providers/services_state.dart';
 import 'package:the_pink_club/features/services/presentation/widgets/service_card.dart';
 import 'package:the_pink_club/core/widgets/language_switcher.dart';
 import 'package:the_pink_club/l10n/app_localizations.dart';
 
-/// Provider to track which sections should load their data
-final sectionLoadVisibilityProvider = StateProvider<Set<String>>((ref) => {});
-
-class HomeScreen extends ConsumerStatefulWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends ConsumerState<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> {
   late ScrollController _scrollController;
+  final Set<String> _loadedSections = {};
 
   @override
   void initState() {
@@ -29,8 +29,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     _scrollController = ScrollController();
     _scrollController.addListener(_onScroll);
 
-    // Start scheduling loads after UI is settled (500ms delay)
-    // This prevents blocking the first frame render
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scheduleLoads();
     });
@@ -38,7 +36,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   void _scheduleLoads() {
     final sections = [
-      ApiActions.car, // Premium Assistance
+      ApiActions.car,
       ApiActions.advisory,
       ApiActions.medicalServices,
       ApiActions.medical,
@@ -49,27 +47,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ApiActions.more,
     ];
 
-    // Aggressive staggering: 1200ms initial delay + 400ms between sections
-    // This ensures minimal concurrent requests and zero main thread blocking
     for (int i = 0; i < sections.length; i++) {
       Future.delayed(Duration(milliseconds: 1200 + (i * 400)), () {
         if (mounted) {
-          // Use microtask to defer state update to next event loop cycle
-          Future.microtask(() {
-            if (mounted) {
-              ref.read(sectionLoadVisibilityProvider.notifier).state = {
-                ...ref.read(sectionLoadVisibilityProvider),
-                sections[i],
-              };
-            }
-          });
+          _loadSection(sections[i]);
         }
       });
     }
+    
+    context.read<ProvidersCubit>().fetchAds();
   }
 
   void _onScroll() {
-    // Trigger loading of sections as user scrolls near them
     final offset = _scrollController.offset;
     final sectionHeight = 250.0;
 
@@ -83,12 +72,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _loadSection(String action) {
-    final loadedSections = ref.read(sectionLoadVisibilityProvider);
-    if (!loadedSections.contains(action)) {
-      ref.read(sectionLoadVisibilityProvider.notifier).state = {
-        ...loadedSections,
-        action,
-      };
+    if (!_loadedSections.contains(action)) {
+      setState(() {
+        _loadedSections.add(action);
+      });
     }
   }
 
@@ -110,48 +97,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         physics: const BouncingScrollPhysics(),
         slivers: [
           _buildAppBar(context),
-
-          // Ads Section (Lazy loaded)
-          _buildAdsSection(ref),
-
-          // Sections
-          _buildServiceSection(ref, l10n.premiumAssistance, ApiActions.car),
-          _buildServiceSection(
-            ref,
-            l10n.strategicAdvisory,
-            ApiActions.advisory,
-          ),
-          _buildServiceSection(
-            ref,
-            l10n.medicalNetwork,
-            ApiActions.medicalServices,
-          ),
-          _buildServiceSection(ref, l10n.healthAdvisory, ApiActions.medical),
-          _buildServiceSection(ref, l10n.eliteConcierge, ApiActions.concierge),
-          _buildServiceSection(
-            ref,
-            l10n.vehicleSupplies,
-            ApiActions.automotive,
-          ),
-          _buildServiceSection(ref, l10n.licenseServices, ApiActions.license),
-          _buildServiceSection(
-            ref,
-            l10n.secondOpinion,
-            ApiActions.secondMedical,
-          ),
-          _buildServiceSection(ref, l10n.exploreMore, ApiActions.more),
-
+          _buildAdsSection(),
+          _buildServiceSection(l10n.premiumAssistance, ApiActions.car),
+          _buildServiceSection(l10n.strategicAdvisory, ApiActions.advisory),
+          _buildServiceSection(l10n.medicalNetwork, ApiActions.medicalServices),
+          _buildServiceSection(l10n.healthAdvisory, ApiActions.medical),
+          _buildServiceSection(l10n.eliteConcierge, ApiActions.concierge),
+          _buildServiceSection(l10n.vehicleSupplies, ApiActions.automotive),
+          _buildServiceSection(l10n.licenseServices, ApiActions.license),
+          _buildServiceSection(l10n.secondOpinion, ApiActions.secondMedical),
+          _buildServiceSection(l10n.exploreMore, ApiActions.more),
           const SliverToBoxAdapter(child: SizedBox(height: 60)),
         ],
       ),
     );
   }
 
-  Widget _buildAdsSection(WidgetRef ref) {
-    final loadedSections = ref.watch(sectionLoadVisibilityProvider);
-
-    // Only load ads when first section is marked as ready
-    if (!loadedSections.contains(ApiActions.car)) {
+  Widget _buildAdsSection() {
+    if (!_loadedSections.contains(ApiActions.car)) {
       return SliverToBoxAdapter(
         child: SizedBox(
           height: 200,
@@ -165,18 +128,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       );
     }
 
-    final adsAsync = ref.watch(providersAdsProvider);
     return SliverToBoxAdapter(
-      child: adsAsync.when(
-        loading: () => const SizedBox(
-          height: 200,
-          child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-        ),
-        error: (context, error) => const SizedBox.shrink(),
-        data: (ads) => Padding(
-          padding: const EdgeInsetsDirectional.only(top: 12, bottom: 28),
-          child: AdsCarouselWidget(ads: ads),
-        ),
+      child: BlocBuilder<ProvidersCubit, ProvidersState>(
+        builder: (context, state) {
+          if (state is ProvidersLoading) {
+            return const SizedBox(
+              height: 200,
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+            );
+          } else if (state is ProvidersLoaded) {
+            return Padding(
+              padding: const EdgeInsetsDirectional.only(top: 12, bottom: 28),
+              child: AdsCarouselWidget(ads: state.ads),
+            );
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
@@ -200,94 +167,77 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           color: AppColors.textPrimary.withAlpha(180),
         ),
       ),
-      // actions: [
-      //   Padding(
-      //     padding: const EdgeInsetsDirectional.only(end: 12),
-      //     child: IconButton(
-      //       icon: const Icon(Icons.notifications_outlined, size: 24),
-      //       onPressed: () {},
-      //     ),
-      //   ),
-      // ],
     );
   }
 
-  Widget _buildServiceSection(WidgetRef ref, String title, String action) {
-    final loadedSections = ref.watch(sectionLoadVisibilityProvider);
-    final shouldLoad = loadedSections.contains(action);
-
-    // Don't load data unless the section is marked as visible
-    if (!shouldLoad) {
+  Widget _buildServiceSection(String title, String action) {
+    if (!_loadedSections.contains(action)) {
       return const SliverToBoxAdapter(child: SizedBox.shrink());
     }
 
-    final servicesAsync = ref.watch(servicesProvider(action));
+    return BlocProvider(
+      create: (context) => sl<ServicesCubit>()..fetchServices(action),
+      child: BlocBuilder<ServicesCubit, ServicesState>(
+        builder: (context, state) {
+          if (state is ServicesLoading) {
+              // We could return a shimmer or empty, usually better to stay empty to avoid jumpiness
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
+          } else if (state is ServicesLoaded) {
+            final services = state.services;
+            if (services.isEmpty) return const SliverToBoxAdapter(child: SizedBox.shrink());
 
-    return servicesAsync.when(
-      loading: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-      error: (context, error) =>
-          const SliverToBoxAdapter(child: SizedBox.shrink()),
-      data: (services) {
-        if (services.isEmpty) {
-          return const SliverToBoxAdapter(child: SizedBox.shrink());
-        }
-
-        return SliverMainAxisGroup(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(28, 32, 28, 16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () {},
-                      child: Builder(
-                        builder: (context) => Text(
-                          AppLocalizations.of(context)!.viewAll,
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.primary.withAlpha(200),
-                            letterSpacing: 0.2,
+            return SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(28, 32, 28, 16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textPrimary,
+                            letterSpacing: -0.5,
                           ),
                         ),
-                      ),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(
+                            AppLocalizations.of(context)!.viewAll,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary.withAlpha(200),
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: SizedBox(
-                height: 172, // Calibrated height
-                child: ListView.separated(
-                  padding: const EdgeInsetsDirectional.symmetric(
-                    horizontal: 28,
                   ),
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: services.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(width: 16),
-                  itemBuilder: (context, index) =>
-                      ServiceCard(service: services[index]),
-                ),
+                  SizedBox(
+                    height: 172,
+                    child: ListView.separated(
+                      padding: const EdgeInsetsDirectional.symmetric(horizontal: 28),
+                      scrollDirection: Axis.horizontal,
+                      physics: const BouncingScrollPhysics(),
+                      itemCount: services.length,
+                      separatorBuilder: (context, index) => const SizedBox(width: 16),
+                      itemBuilder: (context, index) => ServiceCard(service: services[index]),
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        );
-      },
+            );
+          }
+          return const SliverToBoxAdapter(child: SizedBox.shrink());
+        },
+      ),
     );
   }
 }

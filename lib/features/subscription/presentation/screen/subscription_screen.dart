@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
 import 'package:the_pink_club/core/widgets/elite_button.dart';
 import 'package:the_pink_club/core/widgets/elite_text_field.dart';
 import 'package:the_pink_club/features/subscription/data/models/subscription_package.dart';
-import 'package:the_pink_club/features/subscription/presentation/providers/subscription_provider.dart';
+import 'package:the_pink_club/features/subscription/presentation/providers/subscription_cubit.dart';
+import 'package:the_pink_club/features/subscription/presentation/providers/subscription_state.dart';
 import 'package:the_pink_club/l10n/app_localizations.dart';
 
-class SubscriptionScreen extends ConsumerStatefulWidget {
+class SubscriptionScreen extends StatefulWidget {
   const SubscriptionScreen({super.key});
 
   @override
-  ConsumerState<SubscriptionScreen> createState() => _SubscriptionScreenState();
+  State<SubscriptionScreen> createState() => _SubscriptionScreenState();
 }
 
-class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
+class _SubscriptionScreenState extends State<SubscriptionScreen> {
   final _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
 
@@ -31,6 +32,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   String gender = 'female';
   String paymentMethod = 'cash';
   SubscriptionPackage? selectedPackage;
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<SubscriptionCubit>().fetchPackages();
+  }
 
   @override
   void dispose() {
@@ -66,12 +73,11 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final packagesAsync = ref.watch(subscriptionPackagesProvider);
     final l10n = AppLocalizations.of(context)!;
 
-    ref.listen(subscriptionProvider, (prev, next) {
-      next.whenOrNull(
-        data: (_) {
+    return BlocListener<SubscriptionCubit, SubscriptionState>(
+      listener: (context, state) {
+        if (state is SubscriptionSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.membershipSuccess),
@@ -80,59 +86,57 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
             ),
           );
           Navigator.pop(context);
-        },
-        error: (e, _) {
+        } else if (state is SubscriptionError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(e.toString()),
+              content: Text(state.message),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
             ),
           );
-        },
-      );
-    });
-
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: Text(l10n.exclusiveMembership),
-        centerTitle: true,
-        leading: _currentStep > 0
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-                onPressed: _prevStep,
-              )
-            : null,
-        titleTextStyle: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: AppColors.textPrimary,
-          letterSpacing: 0.5,
-        ),
-      ),
-      body: Column(
-        children: [
-          _buildStepIndicator(),
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: 400.ms,
-              transitionBuilder: (Widget child, Animation<double> animation) {
-                return FadeTransition(
-                  opacity: animation,
-                  child: SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0.05, 0),
-                      end: Offset.zero,
-                    ).animate(animation),
-                    child: child,
-                  ),
-                );
-              },
-              child: _buildStepContent(packagesAsync, l10n),
-            ),
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: Text(l10n.exclusiveMembership),
+          centerTitle: true,
+          leading: _currentStep > 0
+              ? IconButton(
+                  icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+                  onPressed: _prevStep,
+                )
+              : null,
+          titleTextStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+            letterSpacing: 0.5,
           ),
-        ],
+        ),
+        body: Column(
+          children: [
+            _buildStepIndicator(),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: 400.ms,
+                transitionBuilder: (Widget child, Animation<double> animation) {
+                  return FadeTransition(
+                    opacity: animation,
+                    child: SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.05, 0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: child,
+                    ),
+                  );
+                },
+                child: _buildStepContent(l10n),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -191,10 +195,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
   }
 
-  Widget _buildStepContent(AsyncValue<List<SubscriptionPackage>> packagesAsync, AppLocalizations l10n) {
+  Widget _buildStepContent(AppLocalizations l10n) {
     switch (_currentStep) {
       case 0:
-        return _buildPackageStep(packagesAsync, l10n);
+        return _buildPackageStep(l10n);
       case 1:
         return _buildIdentityStep(l10n);
       case 2:
@@ -204,51 +208,68 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     }
   }
 
-  Widget _buildPackageStep(AsyncValue<List<SubscriptionPackage>> packagesAsync, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      key: const ValueKey(0),
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            l10n.choosePrivilege,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-              letterSpacing: -0.8,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            l10n.choosePackageDesc,
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary.withAlpha(200),
-            ),
-          ),
-          const SizedBox(height: 24),
-          packagesAsync.when(
-            loading: () => const Center(
-              child: Padding(
-                padding: EdgeInsets.all(40.0),
-                child: CircularProgressIndicator(strokeWidth: 2),
+  Widget _buildPackageStep(AppLocalizations l10n) {
+    return BlocBuilder<SubscriptionCubit, SubscriptionState>(
+      builder: (context, state) {
+        List<SubscriptionPackage> packages = [];
+        bool isLoading = state is SubscriptionLoading;
+
+        if (state is SubscriptionLoaded) {
+          packages = state.packages;
+        } else if (state is SubscriptionSubmitting) {
+          packages = state.packages;
+        } else if (state is SubscriptionSuccess) {
+          packages = state.packages;
+        } else if (state is SubscriptionError) {
+          packages = state.packages ?? [];
+        }
+
+        return SingleChildScrollView(
+          key: const ValueKey(0),
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                l10n.choosePrivilege,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.8,
+                ),
               ),
-            ),
-            error: (err, _) => Center(child: Text('Error: $err')),
-            data: (packages) => Column(
-              children: packages.map((pkg) => _buildPackageCard(pkg)).toList(),
-            ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.choosePackageDesc,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textSecondary.withAlpha(200),
+                ),
+              ),
+              const SizedBox(height: 24),
+              isLoading
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(40.0),
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : packages.isEmpty && state is SubscriptionError
+                      ? Center(child: Text(state.message))
+                      : Column(
+                          children: packages.map((pkg) => _buildPackageCard(pkg)).toList(),
+                        ),
+              const SizedBox(height: 24),
+              EliteButton(
+                label: l10n.continueAuthentication,
+                onPressed: selectedPackage != null ? () => _nextStep(l10n) : null,
+              ),
+            ],
           ),
-          const SizedBox(height: 24),
-          EliteButton(
-            label: l10n.continueAuthentication,
-            onPressed: selectedPackage != null ? () => _nextStep(l10n) : null,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -312,101 +333,105 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
   }
 
   Widget _buildVehicleStep(AppLocalizations l10n) {
-    final subscriptionState = ref.watch(subscriptionProvider);
+    return BlocBuilder<SubscriptionCubit, SubscriptionState>(
+      builder: (context, state) {
+        final isSubmitting = state is SubscriptionSubmitting;
 
-    return SingleChildScrollView(
-      key: const ValueKey(2),
-      physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 10),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              l10n.vehicleSpecification,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-                letterSpacing: -0.8,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.vehicleStepDesc,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary.withAlpha(200),
-              ),
-            ),
-            const SizedBox(height: 32),
-            EliteTextField(
-              controller: carBrandCtrl,
-              label: l10n.manufacturerBrand,
-              icon: Icons.directions_car_filled_outlined,
-            ),
-            EliteTextField(
-              controller: carModelCtrl,
-              label: l10n.vehicleModel,
-              icon: Icons.model_training_outlined,
-            ),
-            Row(
+        return SingleChildScrollView(
+          key: const ValueKey(2),
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 24, vertical: 10),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: EliteTextField(
-                    controller: carYearCtrl,
-                    label: l10n.manufactureYear,
-                    icon: Icons.calendar_today_outlined,
-                    keyboard: TextInputType.number,
+                Text(
+                  l10n.vehicleSpecification,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.8,
                   ),
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: EliteTextField(
-                    controller: carPlateCtrl,
-                    label: l10n.plateIdentifier,
-                    icon: Icons.badge_outlined,
+                const SizedBox(height: 8),
+                Text(
+                  l10n.vehicleStepDesc,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.textSecondary.withAlpha(200),
                   ),
                 ),
+                const SizedBox(height: 32),
+                EliteTextField(
+                  controller: carBrandCtrl,
+                  label: l10n.manufacturerBrand,
+                  icon: Icons.directions_car_filled_outlined,
+                ),
+                EliteTextField(
+                  controller: carModelCtrl,
+                  label: l10n.vehicleModel,
+                  icon: Icons.model_training_outlined,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: EliteTextField(
+                        controller: carYearCtrl,
+                        label: l10n.manufactureYear,
+                        icon: Icons.calendar_today_outlined,
+                        keyboard: TextInputType.number,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: EliteTextField(
+                        controller: carPlateCtrl,
+                        label: l10n.plateIdentifier,
+                        icon: Icons.badge_outlined,
+                      ),
+                    ),
+                  ],
+                ),
+                EliteTextField(
+                  controller: carChassisCtrl,
+                  label: l10n.chassisVin,
+                  icon: Icons.format_list_numbered_rtl_rounded,
+                ),
+                _dropdown(l10n.preferredPayment, paymentMethod, {
+                  'cash': l10n.cash,
+                  'online': l10n.online,
+                }, (v) => setState(() => paymentMethod = v!)),
+                const SizedBox(height: 24),
+                EliteButton(
+                  label: l10n.confirmMembership,
+                  isLoading: isSubmitting,
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      context.read<SubscriptionCubit>().submitSubscription({
+                        'full_name': fullNameCtrl.text,
+                        'phone': phoneCtrl.text,
+                        'address': addressCtrl.text,
+                        'car_brand': carBrandCtrl.text,
+                        'car_model': carModelCtrl.text,
+                        'car_made_year': carYearCtrl.text,
+                        'car_chassis': carChassisCtrl.text,
+                        'car_plate': carPlateCtrl.text,
+                        'gender': gender,
+                        'payment_method': paymentMethod,
+                        'package_id': selectedPackage!.id.toString(),
+                        'birthday': '1995-10-10',
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: 40),
               ],
             ),
-            EliteTextField(
-              controller: carChassisCtrl,
-              label: l10n.chassisVin,
-              icon: Icons.format_list_numbered_rtl_rounded,
-            ),
-            _dropdown(l10n.preferredPayment, paymentMethod, {
-              'cash': l10n.cash,
-              'online': l10n.online,
-            }, (v) => setState(() => paymentMethod = v!)),
-            const SizedBox(height: 24),
-            EliteButton(
-              label: l10n.confirmMembership,
-              isLoading: subscriptionState.isLoading,
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  ref.read(subscriptionProvider.notifier).submit({
-                    'full_name': fullNameCtrl.text,
-                    'phone': phoneCtrl.text,
-                    'address': addressCtrl.text,
-                    'car_brand': carBrandCtrl.text,
-                    'car_model': carModelCtrl.text,
-                    'car_made_year': carYearCtrl.text,
-                    'car_chassis': carChassisCtrl.text,
-                    'car_plate': carPlateCtrl.text,
-                    'gender': gender,
-                    'payment_method': paymentMethod,
-                    'package_id': selectedPackage!.id.toString(),
-                    'birthday': '1995-10-10',
-                  });
-                }
-              },
-            ),
-            const SizedBox(height: 40),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -487,7 +512,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Padding(
       padding: const EdgeInsetsDirectional.only(bottom: 20),
       child: DropdownButtonFormField<String>(
-        initialValue: value,
+        value: value,
         style: const TextStyle(fontSize: 14, color: AppColors.textPrimary, fontWeight: FontWeight.w500),
         items: items.entries
             .map((e) => DropdownMenuItem(
