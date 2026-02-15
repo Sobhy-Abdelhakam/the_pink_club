@@ -21,7 +21,10 @@ class ServiceDetailsScreen extends StatelessWidget {
           _buildSliverAppBar(context),
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsetsDirectional.symmetric(horizontal: 28, vertical: 32),
+              padding: const EdgeInsetsDirectional.symmetric(
+                horizontal: 28,
+                vertical: 32,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -37,7 +40,6 @@ class ServiceDetailsScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: _buildBottomAction(context, l10n),
     );
   }
 
@@ -50,7 +52,11 @@ class ServiceDetailsScreen extends StatelessWidget {
       leading: IconButton(
         icon: const CircleAvatar(
           backgroundColor: Colors.white,
-          child: Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textPrimary),
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            size: 18,
+            color: AppColors.textPrimary,
+          ),
         ),
         onPressed: () => Navigator.pop(context),
       ),
@@ -72,11 +78,7 @@ class ServiceDetailsScreen extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black26,
-                    Colors.transparent,
-                    Colors.black87,
-                  ],
+                  colors: [Colors.black26, Colors.transparent, Colors.black87],
                   stops: [0.0, 0.5, 1.0],
                 ),
               ),
@@ -84,18 +86,6 @@ class ServiceDetailsScreen extends StatelessWidget {
           ],
         ),
       ),
-      actions: [
-        Padding(
-          padding: const EdgeInsetsDirectional.only(end: 16),
-          child: IconButton(
-            icon: const CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Icon(Icons.share_outlined, color: AppColors.textPrimary, size: 20),
-            ),
-            onPressed: () {},
-          ),
-        ),
-      ],
     );
   }
 
@@ -189,68 +179,32 @@ class ServiceDetailsScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        ...service.features.map((feature) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.check_circle_outline_rounded,
-                    color: service.brandColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      feature,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: AppColors.textPrimary,
-                        height: 1.4,
-                      ),
+        ...service.features.map(
+          (feature) => Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: service.brandColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    feature,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textPrimary,
+                      height: 1.4,
                     ),
                   ),
-                ],
-              ),
-            )),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     ).animate().fadeIn(duration: 500.ms, delay: 200.ms);
-  }
-
-  Widget _buildBottomAction(BuildContext context, AppLocalizations l10n) {
-    return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(28, 20, 28, 40),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: AppColors.divider, width: 1)),
-      ),
-      child: ElevatedButton(
-        onPressed: () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.processingInquiry),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: AppColors.textPrimary,
-            ),
-          );
-        },
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 18),
-          backgroundColor: service.brandColor,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ),
-        child: Text(
-          l10n.requestServiceAccess,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            letterSpacing: 0.5,
-          ),
-        ),
-      ),
-    );
   }
 }
