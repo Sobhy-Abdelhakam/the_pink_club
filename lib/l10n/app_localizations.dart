@@ -565,6 +565,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load packages'**
   String get failedLoadPackages;
+
+  /// No description provided for @loginWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome Back'**
+  String get loginWelcomeTitle;
+
+  /// No description provided for @loginWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Login to access your exclusive services.'**
+  String get loginWelcomeSubtitle;
+
+  /// No description provided for @loginEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get loginEmailLabel;
+
+  /// No description provided for @loginEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get loginEmailRequired;
+
+  /// No description provided for @loginEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get loginEmailInvalid;
+
+  /// No description provided for @loginPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get loginPasswordLabel;
+
+  /// No description provided for @loginPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get loginPasswordRequired;
+
+  /// No description provided for @loginPasswordMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get loginPasswordMin;
+
+  /// No description provided for @loginButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get loginButton;
+
+  /// No description provided for @loginNoAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Don't have an account?'**
+  String get loginNoAccount;
+
+  /// No description provided for @loginCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get loginCreateAccount;
+
+  /// No description provided for @registerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get registerTitle;
+
+  /// No description provided for @registerFullNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get registerFullNameLabel;
+
+  /// No description provided for @registerFullNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Full name is required'**
+  String get registerFullNameRequired;
+
+  /// No description provided for @registerEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address'**
+  String get registerEmailLabel;
+
+  /// No description provided for @registerEmailRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get registerEmailRequired;
+
+  /// No description provided for @registerEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get registerEmailInvalid;
+
+  /// No description provided for @registerBirthdayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Birthday (YYYY-MM-DD)'**
+  String get registerBirthdayLabel;
+
+  /// No description provided for @registerGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get registerGenderLabel;
+
+  /// No description provided for @registerPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get registerPhoneLabel;
+
+  /// No description provided for @registerAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get registerAddressLabel;
+
+  /// No description provided for @registerPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get registerPasswordLabel;
+
+  /// No description provided for @registerPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get registerPasswordRequired;
+
+  /// No description provided for @registerPasswordMin.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get registerPasswordMin;
+
+  /// No description provided for @registerConfirmPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get registerConfirmPasswordLabel;
+
+  /// No description provided for @registerConfirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your password'**
+  String get registerConfirmPasswordRequired;
+
+  /// No description provided for @registerPasswordsNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get registerPasswordsNotMatch;
+
+  /// No description provided for @registerButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get registerButton;
 }
 
 class _AppLocalizationsDelegate

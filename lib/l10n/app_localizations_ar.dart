@@ -243,4 +243,91 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get failedLoadPackages => 'فشل تحميل الباقات';
+
+  @override
+  String get loginWelcomeTitle => 'مرحباً بعودتك';
+
+  @override
+  String get loginWelcomeSubtitle =>
+      'سجّل الدخول للوصول إلى خدماتك الحصرية.';
+
+  @override
+  String get loginEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get loginEmailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get loginEmailInvalid => 'يرجى إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get loginPasswordLabel => 'كلمة المرور';
+
+  @override
+  String get loginPasswordRequired => 'كلمة المرور مطلوبة';
+
+  @override
+  String get loginPasswordMin => 'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
+
+  @override
+  String get loginButton => 'تسجيل الدخول';
+
+  @override
+  String get loginNoAccount => 'ليس لديك حساب؟';
+
+  @override
+  String get loginCreateAccount => 'إنشاء حساب';
+
+  @override
+  String get registerTitle => 'إنشاء حساب';
+
+  @override
+  String get registerFullNameLabel => 'الاسم الكامل';
+
+  @override
+  String get registerFullNameRequired => 'الاسم الكامل مطلوب';
+
+  @override
+  String get registerEmailLabel => 'البريد الإلكتروني';
+
+  @override
+  String get registerEmailRequired => 'البريد الإلكتروني مطلوب';
+
+  @override
+  String get registerEmailInvalid => 'يرجى إدخال بريد إلكتروني صحيح';
+
+  @override
+  String get registerBirthdayLabel => 'تاريخ الميلاد (YYYY-MM-DD)';
+
+  @override
+  String get registerGenderLabel => 'الجنس';
+
+  @override
+  String get registerPhoneLabel => 'رقم الهاتف';
+
+  @override
+  String get registerAddressLabel => 'العنوان';
+
+  @override
+  String get registerPasswordLabel => 'كلمة المرور';
+
+  @override
+  String get registerPasswordRequired => 'كلمة المرور مطلوبة';
+
+  @override
+  String get registerPasswordMin =>
+      'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
+
+  @override
+  String get registerConfirmPasswordLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get registerConfirmPasswordRequired =>
+      'يرجى تأكيد كلمة المرور';
+
+  @override
+  String get registerPasswordsNotMatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
+  String get registerButton => 'إنشاء الحساب';
 }

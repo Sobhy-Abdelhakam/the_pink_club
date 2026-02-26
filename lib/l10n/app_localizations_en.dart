@@ -247,4 +247,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get failedLoadPackages => 'Failed to load packages';
+
+  @override
+  String get loginWelcomeTitle => 'Welcome Back';
+
+  @override
+  String get loginWelcomeSubtitle =>
+      'Login to access your exclusive services.';
+
+  @override
+  String get loginEmailLabel => 'Email Address';
+
+  @override
+  String get loginEmailRequired => 'Email is required';
+
+  @override
+  String get loginEmailInvalid => 'Enter a valid email';
+
+  @override
+  String get loginPasswordLabel => 'Password';
+
+  @override
+  String get loginPasswordRequired => 'Password is required';
+
+  @override
+  String get loginPasswordMin => 'Password must be at least 6 characters';
+
+  @override
+  String get loginButton => 'Login';
+
+  @override
+  String get loginNoAccount => 'Don\'t have an account?';
+
+  @override
+  String get loginCreateAccount => 'Create Account';
+
+  @override
+  String get registerTitle => 'Create Account';
+
+  @override
+  String get registerFullNameLabel => 'Full Name';
+
+  @override
+  String get registerFullNameRequired => 'Full name is required';
+
+  @override
+  String get registerEmailLabel => 'Email Address';
+
+  @override
+  String get registerEmailRequired => 'Email is required';
+
+  @override
+  String get registerEmailInvalid => 'Enter a valid email';
+
+  @override
+  String get registerBirthdayLabel => 'Birthday (YYYY-MM-DD)';
+
+  @override
+  String get registerGenderLabel => 'Gender';
+
+  @override
+  String get registerPhoneLabel => 'Phone Number';
+
+  @override
+  String get registerAddressLabel => 'Address';
+
+  @override
+  String get registerPasswordLabel => 'Password';
+
+  @override
+  String get registerPasswordRequired => 'Password is required';
+
+  @override
+  String get registerPasswordMin =>
+      'Password must be at least 6 characters';
+
+  @override
+  String get registerConfirmPasswordLabel => 'Confirm Password';
+
+  @override
+  String get registerConfirmPasswordRequired =>
+      'Confirm your password';
+
+  @override
+  String get registerPasswordsNotMatch => 'Passwords do not match';
+
+  @override
+  String get registerButton => 'Create Account';
 }

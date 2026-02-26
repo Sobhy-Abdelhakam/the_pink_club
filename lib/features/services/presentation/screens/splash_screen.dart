@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_pink_club/core/di/service_locator.dart';
+import 'package:the_pink_club/features/auth/presentation/providers/auth_cubit.dart';
+import 'package:the_pink_club/features/auth/presentation/providers/auth_state.dart';
+import 'package:the_pink_club/features/auth/presentation/screens/login_screen.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'main_screen.dart';
 
@@ -14,15 +19,35 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigateToHome();
+    _navigateNext();
   }
 
-  Future<void> _navigateToHome() async {
+  Future<void> _navigateNext() async {
     await Future.delayed(const Duration(milliseconds: 2500));
     if (!mounted) return;
+
+    final authCubit = sl<AuthCubit>()..checkAuthStatus();
+
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const MainScreen()),
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: authCubit,
+          child: BlocBuilder<AuthCubit, AuthState>(
+            builder: (context, state) {
+              if (state is AuthAuthenticated) {
+                return const MainScreen();
+              }
+              if (state is AuthLoading || state is AuthInitial) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+              return const LoginScreen();
+            },
+          ),
+        ),
+      ),
     );
   }
 

@@ -1,7 +1,10 @@
 import 'package:get_it/get_it.dart';
+import 'package:dio/dio.dart';
 import 'package:the_pink_club/core/cache/cache_service.dart';
 import 'package:the_pink_club/core/network/api_client.dart';
 import 'package:the_pink_club/core/providers/locale_cubit.dart';
+import 'package:the_pink_club/features/auth/data/auth_repository.dart';
+import 'package:the_pink_club/features/auth/presentation/providers/auth_cubit.dart';
 import 'package:the_pink_club/features/about/data/about_repository.dart';
 import 'package:the_pink_club/features/about/presentation/providers/about_cubit.dart';
 import 'package:the_pink_club/features/contact/data/contact_repository.dart';
@@ -24,6 +27,7 @@ Future<void> init() async {
   // Core - Other Services
   sl.registerLazySingleton(() => LocaleCubit());
   sl.registerLazySingleton(() => ApiClient());
+  sl.registerLazySingleton(() => AuthRepository(Dio(), sl.get()));
 
   // Repositories
   sl.registerLazySingleton(() => AboutRepository(sl.get(), sl.get()));
@@ -34,6 +38,7 @@ Future<void> init() async {
 
   // Blocs/Cubits - Singleton for state sharing
   sl.registerLazySingleton(() => ServicesCubit(sl.get()));
+  sl.registerLazySingleton(() => AuthCubit(sl.get()));
   
   // Blocs/Cubits - Factory instances
   sl.registerFactory(() => AboutCubit(sl.get()));
