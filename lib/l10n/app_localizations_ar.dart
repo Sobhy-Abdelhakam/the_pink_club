@@ -248,8 +248,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loginWelcomeTitle => 'مرحباً بعودتك';
 
   @override
-  String get loginWelcomeSubtitle =>
-      'سجّل الدخول للوصول إلى خدماتك الحصرية.';
+  String get loginWelcomeSubtitle => 'سجّل الدخول للوصول إلى خدماتك الحصرية.';
 
   @override
   String get loginEmailLabel => 'البريد الإلكتروني';
@@ -315,15 +314,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get registerPasswordRequired => 'كلمة المرور مطلوبة';
 
   @override
-  String get registerPasswordMin =>
-      'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
+  String get registerPasswordMin => 'يجب أن تكون كلمة المرور 6 أحرف على الأقل';
 
   @override
   String get registerConfirmPasswordLabel => 'تأكيد كلمة المرور';
 
   @override
-  String get registerConfirmPasswordRequired =>
-      'يرجى تأكيد كلمة المرور';
+  String get registerConfirmPasswordRequired => 'يرجى تأكيد كلمة المرور';
 
   @override
   String get registerPasswordsNotMatch => 'كلمتا المرور غير متطابقتين';

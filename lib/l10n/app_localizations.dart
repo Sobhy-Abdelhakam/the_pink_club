@@ -623,7 +623,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginNoAccount.
   ///
   /// In en, this message translates to:
-  /// **'Don't have an account?'**
+  /// **'Don\'t have an account?'**
   String get loginNoAccount;
 
   /// No description provided for @loginCreateAccount.

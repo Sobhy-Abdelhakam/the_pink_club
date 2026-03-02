@@ -252,8 +252,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginWelcomeTitle => 'Welcome Back';
 
   @override
-  String get loginWelcomeSubtitle =>
-      'Login to access your exclusive services.';
+  String get loginWelcomeSubtitle => 'Login to access your exclusive services.';
 
   @override
   String get loginEmailLabel => 'Email Address';
@@ -319,15 +318,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerPasswordRequired => 'Password is required';
 
   @override
-  String get registerPasswordMin =>
-      'Password must be at least 6 characters';
+  String get registerPasswordMin => 'Password must be at least 6 characters';
 
   @override
   String get registerConfirmPasswordLabel => 'Confirm Password';
 
   @override
-  String get registerConfirmPasswordRequired =>
-      'Confirm your password';
+  String get registerConfirmPasswordRequired => 'Confirm your password';
 
   @override
   String get registerPasswordsNotMatch => 'Passwords do not match';
