@@ -9,10 +9,7 @@ import '../screens/provider_details_screen.dart';
 class AdsCarouselWidget extends StatefulWidget {
   final List<ProviderAdModel> ads;
 
-  const AdsCarouselWidget({
-    super.key,
-    required this.ads,
-  });
+  const AdsCarouselWidget({super.key, required this.ads});
 
   @override
   State<AdsCarouselWidget> createState() => _AdsCarouselWidgetState();
@@ -86,10 +83,7 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
 class _AdItem extends StatelessWidget {
   final ProviderAdModel ad;
 
-  const _AdItem({
-    super.key,
-    required this.ad,
-  });
+  const _AdItem({super.key, required this.ad});
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +116,7 @@ class _AdItem extends StatelessWidget {
               /// Cached Image
               CachedNetworkImage(
                 imageUrl: ad.image,
-                fit: BoxFit.cover,
+                fit: BoxFit.fill,
                 memCacheWidth: 1200, // Optional optimization
                 placeholder: (context, url) => Container(
                   color: AppColors.surfaceVariant,
