@@ -9,15 +9,24 @@ import '../screens/provider_details_screen.dart';
 class AdsCarouselWidget extends StatefulWidget {
   final List<ProviderAdModel> ads;
 
-  const AdsCarouselWidget({super.key, required this.ads});
+  const AdsCarouselWidget({
+    super.key,
+    required this.ads,
+  });
 
   @override
   State<AdsCarouselWidget> createState() => _AdsCarouselWidgetState();
 }
 
 class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
-  int _activeIndex = 0;
   final CarouselSliderController _controller = CarouselSliderController();
+  final ValueNotifier<int> _activeIndexNotifier = ValueNotifier<int>(0);
+
+  @override
+  void dispose() {
+    _activeIndexNotifier.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +39,11 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
           itemCount: widget.ads.length,
           itemBuilder: (context, index, realIndex) {
             final ad = widget.ads[index];
-            debugPrint('Ads Carousel Image URL: ${ad.image}');
-            return _buildAdItem(ad);
+
+            return _AdItem(
+              key: ValueKey(ad.image), // Important for stability
+              ad: ad,
+            );
           },
           options: CarouselOptions(
             height: 240,
@@ -40,25 +52,53 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
             autoPlay: true,
             autoPlayInterval: const Duration(seconds: 5),
             onPageChanged: (index, reason) {
-              setState(() {
-                _activeIndex = index;
-              });
+              _activeIndexNotifier.value = index;
             },
           ),
         ),
+
         const SizedBox(height: 4),
-        AnimatedIndicator(activeIndex: _activeIndex, count: widget.ads.length),
+
+        /// Only indicator rebuilds
+        ValueListenableBuilder<int>(
+          valueListenable: _activeIndexNotifier,
+          builder: (context, activeIndex, _) {
+            return AnimatedSmoothIndicator(
+              activeIndex: activeIndex,
+              count: widget.ads.length,
+              effect: const ExpandingDotsEffect(
+                dotHeight: 5,
+                dotWidth: 5,
+                expansionFactor: 4,
+                spacing: 8,
+                activeDotColor: AppColors.primary,
+                dotColor: AppColors.divider,
+              ),
+            );
+          },
+        ),
       ],
     );
   }
+}
 
-  Widget _buildAdItem(ProviderAdModel ad) {
+/// Extracted into separate widget to prevent unnecessary rebuilds
+class _AdItem extends StatelessWidget {
+  final ProviderAdModel ad;
+
+  const _AdItem({
+    super.key,
+    required this.ad,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProviderDetailsScreen(provider: ad),
+            builder: (_) => ProviderDetailsScreen(provider: ad),
           ),
         );
       },
@@ -77,12 +117,13 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(24),
           child: Stack(
+            fit: StackFit.expand,
             children: [
+              /// Cached Image
               CachedNetworkImage(
                 imageUrl: ad.image,
-                fit: BoxFit.fill,
-                width: double.infinity,
-                height: double.infinity,
+                fit: BoxFit.cover,
+                memCacheWidth: 1200, // Optional optimization
                 placeholder: (context, url) => Container(
                   color: AppColors.surfaceVariant,
                   child: const Center(
@@ -98,6 +139,8 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
                   ),
                 ),
               ),
+
+              /// Gradient overlay
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
@@ -111,6 +154,8 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
                   ),
                 ),
               ),
+
+              /// Text
               Positioned(
                 bottom: 24,
                 left: 24,
@@ -145,33 +190,6 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class AnimatedIndicator extends StatelessWidget {
-  final int activeIndex;
-  final int count;
-
-  const AnimatedIndicator({
-    super.key,
-    required this.activeIndex,
-    required this.count,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedSmoothIndicator(
-      activeIndex: activeIndex,
-      count: count,
-      effect: const ExpandingDotsEffect(
-        dotHeight: 5,
-        dotWidth: 5,
-        expansionFactor: 4,
-        spacing: 8,
-        activeDotColor: AppColors.primary,
-        dotColor: AppColors.divider,
       ),
     );
   }
