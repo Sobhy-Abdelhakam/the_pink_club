@@ -108,5 +108,14 @@
   "registerConfirmPasswordLabel": "Confirm Password",
   "registerConfirmPasswordRequired": "Confirm your password",
   "registerPasswordsNotMatch": "Passwords do not match",
-  "registerButton": "Create Account"
+  "registerButton": "Create Account",
+  "welcomeBack": "Welcome back, {name}",
+  "@welcomeBack": {
+    "description": "Welcome message with user first name",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }

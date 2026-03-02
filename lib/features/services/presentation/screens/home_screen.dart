@@ -9,6 +9,8 @@ import 'package:the_pink_club/features/services/presentation/providers/services_
 import 'package:the_pink_club/features/services/presentation/providers/services_state.dart';
 import 'package:the_pink_club/features/services/presentation/widgets/service_card.dart';
 import 'package:the_pink_club/core/widgets/language_switcher.dart';
+import 'package:the_pink_club/features/auth/presentation/providers/auth_cubit.dart';
+import 'package:the_pink_club/features/auth/presentation/providers/auth_state.dart';
 import 'package:the_pink_club/l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -131,28 +133,41 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildUserInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.appTitle.toUpperCase(),
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w800,
-            letterSpacing: 1.5,
-            color: AppColors.primary,
-          ),
-        ),
-        const SizedBox(height: 2),
-        const Text(
-          "Welcome back, Queen",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: AppColors.textPrimary,
-          ),
-        ),
-      ],
+    return BlocBuilder<AuthCubit, AuthState>(
+      builder: (context, authState) {
+        String displayName = 'Queen';
+        
+        if (authState is AuthAuthenticated) {
+          // Extract first name or use full name
+          displayName = authState.user.fullName.split(' ').first;
+        }
+        
+        final l10n = AppLocalizations.of(context)!;
+        
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              l10n.appTitle.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.5,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              l10n.welcomeBack(displayName),
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

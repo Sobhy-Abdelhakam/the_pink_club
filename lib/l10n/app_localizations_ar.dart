@@ -327,4 +327,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get registerButton => 'إنشاء الحساب';
+
+  @override
+  String welcomeBack(String name) {
+    return 'أهلا بعودتك، $name';
+  }
 }

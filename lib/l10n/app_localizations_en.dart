@@ -331,4 +331,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registerButton => 'Create Account';
+
+  @override
+  String welcomeBack(String name) {
+    return 'Welcome back, $name';
+  }
 }

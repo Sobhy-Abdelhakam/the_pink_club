@@ -733,6 +733,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Account'**
   String get registerButton;
+
+  /// Welcome message with user first name
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back, {name}'**
+  String welcomeBack(String name);
 }
 
 class _AppLocalizationsDelegate

@@ -105,5 +105,14 @@
   "registerConfirmPasswordLabel": "تأكيد كلمة المرور",
   "registerConfirmPasswordRequired": "يرجى تأكيد كلمة المرور",
   "registerPasswordsNotMatch": "كلمتا المرور غير متطابقتين",
-  "registerButton": "إنشاء الحساب"
+  "registerButton": "إنشاء الحساب",
+  "welcomeBack": "أهلا بعودتك، {name}",
+  "@welcomeBack": {
+    "description": "رسالة الترحيب باسم المستخدم الأول",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  }
 }
