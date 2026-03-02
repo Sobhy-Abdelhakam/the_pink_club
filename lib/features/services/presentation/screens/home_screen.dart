@@ -89,9 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (state is ProvidersLoading) {
             return const SizedBox(
               height: 200,
-              child: Center(
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
             );
           } else if (state is ProvidersLoaded) {
             if (state.ads.isEmpty) return const SizedBox.shrink();
@@ -136,14 +134,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, authState) {
         String displayName = 'Queen';
-        
+
         if (authState is AuthAuthenticated) {
           // Extract first name or use full name
           displayName = authState.user.fullName.split(' ').first;
         }
-        
+
         final l10n = AppLocalizations.of(context)!;
-        
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -180,9 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return const SliverToBoxAdapter(
               child: SizedBox(
                 height: 200,
-                child: Center(
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
+                child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
               ),
             );
           }
@@ -263,9 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                   color: AppColors.error.withAlpha(10),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: AppColors.error.withAlpha(50),
-                  ),
+                  border: Border.all(color: AppColors.error.withAlpha(50)),
                 ),
                 child: Row(
                   children: [
@@ -296,7 +290,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     IconButton(
                       onPressed: () {
-                        context.read<ServicesCubit>().fetchMultipleSections(_allSections);
+                        context.read<ServicesCubit>().fetchMultipleSections(
+                          _allSections,
+                        );
                       },
                       icon: Icon(Icons.refresh, color: AppColors.error),
                     ),
