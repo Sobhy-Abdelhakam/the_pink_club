@@ -8,6 +8,8 @@ class EliteTextField extends StatelessWidget {
   final TextInputType keyboard;
   final int maxLines;
   final String? Function(String?)? validator;
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   const EliteTextField({
     super.key,
@@ -17,6 +19,8 @@ class EliteTextField extends StatelessWidget {
     this.keyboard = TextInputType.text,
     this.maxLines = 1,
     this.validator,
+    this.readOnly = false,
+    this.onTap,
   });
 
   @override
@@ -27,22 +31,26 @@ class EliteTextField extends StatelessWidget {
         controller: controller,
         keyboardType: keyboard,
         maxLines: maxLines,
-        validator: validator ?? (v) => v == null || v.isEmpty ? 'Field required' : null,
+        readOnly: readOnly,
+        onTap: onTap,
+        validator:
+            validator ??
+            (v) => v == null || v.isEmpty ? 'Field required' : null,
         style: const TextStyle(
-          fontSize: 14, 
+          fontSize: 14,
           color: AppColors.textPrimary,
           fontWeight: FontWeight.w500,
         ),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
-            fontSize: 13, 
+            fontSize: 13,
             color: AppColors.textSecondary.withAlpha(180),
             letterSpacing: 0.2,
           ),
           prefixIcon: Icon(
-            icon, 
-            color: AppColors.primary.withAlpha(180), 
+            icon,
+            color: AppColors.primary.withAlpha(180),
             size: 20,
           ),
           filled: true,
@@ -63,7 +71,10 @@ class EliteTextField extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             borderSide: const BorderSide(color: AppColors.error, width: 1),
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 18,
+          ),
           alignLabelWithHint: true,
         ),
       ),

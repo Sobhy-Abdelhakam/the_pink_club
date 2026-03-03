@@ -151,6 +151,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectGender => 'Select Gender';
 
   @override
+  String get genderMale => 'Male';
+
+  @override
+  String get genderFemale => 'Female';
+
+  @override
+  String get genderOther => 'Other';
+
+  @override
   String get proceedToVehicle => 'Proceed to Vehicle Details';
 
   @override

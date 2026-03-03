@@ -6,6 +6,7 @@ import 'package:the_pink_club/core/widgets/elite_text_field.dart';
 import 'package:the_pink_club/features/auth/presentation/providers/auth_cubit.dart';
 import 'package:the_pink_club/features/auth/presentation/providers/auth_state.dart';
 import 'package:the_pink_club/l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -20,7 +21,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _birthdayController = TextEditingController();
-  final _genderController = TextEditingController();
+  DateTime? _selectedBirthday;
+  String? _selectedGender;
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -31,7 +33,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _fullNameController.dispose();
     _emailController.dispose();
     _birthdayController.dispose();
-    _genderController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
     _passwordController.dispose();
@@ -45,7 +46,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     if (_passwordController.text.trim() !=
         _confirmPasswordController.text.trim()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.registerPasswordsNotMatch)),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.registerPasswordsNotMatch,
+          ),
+        ),
       );
       return;
     }
@@ -54,7 +59,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       fullName: _fullNameController.text.trim(),
       email: _emailController.text.trim(),
       birthday: _birthdayController.text.trim(),
-      gender: _genderController.text.trim(),
+      gender: _selectedGender?.trim() ?? '',
       phoneNumber: _phoneController.text.trim(),
       address: _addressController.text.trim(),
       password: _passwordController.text.trim(),
@@ -79,9 +84,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
             if (state is AuthAuthenticated) {
               Navigator.of(context).pop();
             } else if (state is AuthError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.message)));
             }
           },
           builder: (context, state) {
@@ -98,8 +103,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _fullNameController,
                       label: l10n.registerFullNameLabel,
                       icon: Icons.person_rounded,
-                      validator: (v) =>
-                          v == null || v.isEmpty ? l10n.registerFullNameRequired : null,
+                      validator: (v) => v == null || v.isEmpty
+                          ? l10n.registerFullNameRequired
+                          : null,
                     ),
                     EliteTextField(
                       controller: _emailController,
@@ -120,12 +126,89 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _birthdayController,
                       label: l10n.registerBirthdayLabel,
                       icon: Icons.cake_rounded,
-                      keyboard: TextInputType.datetime,
+                      readOnly: true,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? l10n.fieldRequired : null,
+                      onTap: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: _selectedBirthday ?? DateTime(2000),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                          locale: Localizations.localeOf(context),
+                        );
+                        if (picked != null) {
+                          _selectedBirthday = picked;
+                          _birthdayController.text = DateFormat(
+                            'yyyy-MM-dd',
+                          ).format(picked);
+                        }
+                      },
                     ),
-                    EliteTextField(
-                      controller: _genderController,
-                      label: l10n.registerGenderLabel,
-                      icon: Icons.wc_rounded,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: DropdownButtonFormField<String>(
+                        value: _selectedGender,
+                        decoration: InputDecoration(
+                          labelText: l10n.registerGenderLabel,
+                          prefixIcon: Icon(
+                            Icons.wc_rounded,
+                            color: AppColors.primary.withAlpha(180),
+                            size: 20,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: AppColors.divider,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: AppColors.divider,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: AppColors.primary,
+                              width: 1.5,
+                            ),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: AppColors.error,
+                              width: 1,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 18,
+                          ),
+                          alignLabelWithHint: true,
+                        ),
+                        items:
+                            [
+                                  l10n.genderMale,
+                                  l10n.genderFemale,
+                                  l10n.genderOther,
+                                ]
+                                .map(
+                                  (g) => DropdownMenuItem(
+                                    value: g,
+                                    child: Text(g),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (v) => setState(() {
+                          _selectedGender = v;
+                        }),
+                        validator: (v) =>
+                            v == null || v.isEmpty ? l10n.fieldRequired : null,
+                      ),
                     ),
                     EliteTextField(
                       controller: _phoneController,
@@ -183,5 +266,3 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 }
-
-

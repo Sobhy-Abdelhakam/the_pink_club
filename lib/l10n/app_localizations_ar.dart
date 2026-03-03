@@ -149,6 +149,15 @@ class AppLocalizationsAr extends AppLocalizations {
   String get selectGender => 'اختر الجنس';
 
   @override
+  String get genderMale => 'ذكر';
+
+  @override
+  String get genderFemale => 'أنثى';
+
+  @override
+  String get genderOther => 'أخرى';
+
+  @override
   String get proceedToVehicle => 'المتابعة إلى تفاصيل المركبة';
 
   @override

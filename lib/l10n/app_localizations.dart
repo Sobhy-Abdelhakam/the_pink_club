@@ -374,6 +374,24 @@ abstract class AppLocalizations {
   /// **'Select Gender'**
   String get selectGender;
 
+  /// Male gender label
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get genderMale;
+
+  /// Female gender label
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get genderFemale;
+
+  /// Other gender label
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get genderOther;
+
   /// No description provided for @proceedToVehicle.
   ///
   /// In en, this message translates to:
