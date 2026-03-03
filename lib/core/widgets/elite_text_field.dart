@@ -10,6 +10,8 @@ class EliteTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool readOnly;
   final VoidCallback? onTap;
+  final bool obscureText;
+  final Widget? suffixIcon;
 
   const EliteTextField({
     super.key,
@@ -21,6 +23,8 @@ class EliteTextField extends StatelessWidget {
     this.validator,
     this.readOnly = false,
     this.onTap,
+    this.obscureText = false,
+    this.suffixIcon,
   });
 
   @override
@@ -32,6 +36,7 @@ class EliteTextField extends StatelessWidget {
         keyboardType: keyboard,
         maxLines: maxLines,
         readOnly: readOnly,
+        obscureText: obscureText,
         onTap: onTap,
         validator:
             validator ??
@@ -53,6 +58,7 @@ class EliteTextField extends StatelessWidget {
             color: AppColors.primary.withAlpha(180),
             size: 20,
           ),
+          suffixIcon: suffixIcon,
           filled: true,
           fillColor: Colors.white,
           border: OutlineInputBorder(

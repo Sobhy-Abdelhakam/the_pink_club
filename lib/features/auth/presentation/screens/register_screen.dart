@@ -22,11 +22,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _birthdayController = TextEditingController();
   DateTime? _selectedBirthday;
-  String? _selectedGender;
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   @override
   void dispose() {
@@ -59,7 +60,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       fullName: _fullNameController.text.trim(),
       email: _emailController.text.trim(),
       birthday: _birthdayController.text.trim(),
-      gender: _selectedGender?.trim() ?? '',
+      // Gender is fixed to "Female" for registration request
+      gender: 'Female',
       phoneNumber: _phoneController.text.trim(),
       address: _addressController.text.trim(),
       password: _passwordController.text.trim(),
@@ -145,71 +147,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         }
                       },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedGender,
-                        decoration: InputDecoration(
-                          labelText: l10n.registerGenderLabel,
-                          prefixIcon: Icon(
-                            Icons.wc_rounded,
-                            color: AppColors.primary.withAlpha(180),
-                            size: 20,
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(
-                              color: AppColors.divider,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(
-                              color: AppColors.divider,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(
-                              color: AppColors.primary,
-                              width: 1.5,
-                            ),
-                          ),
-                          errorBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: const BorderSide(
-                              color: AppColors.error,
-                              width: 1,
-                            ),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 18,
-                          ),
-                          alignLabelWithHint: true,
-                        ),
-                        items:
-                            [
-                                  l10n.genderMale,
-                                  l10n.genderFemale,
-                                  l10n.genderOther,
-                                ]
-                                .map(
-                                  (g) => DropdownMenuItem(
-                                    value: g,
-                                    child: Text(g),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (v) => setState(() {
-                          _selectedGender = v;
-                        }),
-                        validator: (v) =>
-                            v == null || v.isEmpty ? l10n.fieldRequired : null,
-                      ),
-                    ),
                     EliteTextField(
                       controller: _phoneController,
                       label: l10n.registerPhoneLabel,
@@ -228,6 +165,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       label: l10n.registerPasswordLabel,
                       icon: Icons.lock_rounded,
                       keyboard: TextInputType.visiblePassword,
+                      obscureText: _obscurePassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility_off_rounded
+                              : Icons.visibility_rounded,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      ),
                       validator: (v) {
                         if (v == null || v.isEmpty) {
                           return l10n.registerPasswordRequired;
@@ -243,6 +193,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       label: l10n.registerConfirmPasswordLabel,
                       icon: Icons.lock_outline_rounded,
                       keyboard: TextInputType.visiblePassword,
+                      obscureText: _obscureConfirmPassword,
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscureConfirmPassword
+                              ? Icons.visibility_off_rounded
+                              : Icons.visibility_rounded,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscureConfirmPassword = !_obscureConfirmPassword;
+                          });
+                        },
+                      ),
                       validator: (v) {
                         if (v == null || v.isEmpty) {
                           return l10n.registerConfirmPasswordRequired;
