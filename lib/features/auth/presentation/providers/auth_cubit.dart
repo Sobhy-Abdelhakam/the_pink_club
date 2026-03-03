@@ -28,8 +28,13 @@ class AuthCubit extends Cubit<AuthState> {
       final user = await _repository.login(email: email, password: password);
       emit(AuthAuthenticated(user));
     } on DioException catch (e) {
-      final message =
-          e.response?.data['message']?.toString() ?? 'Network error';
+      final data = e.response?.data;
+      String message;
+      if (data is Map && data['message'] != null) {
+        message = data['message'].toString();
+      } else {
+        message = e.message ?? 'Network error';
+      }
       emit(AuthError(message));
     } catch (e) {
       emit(AuthError(e.toString()));
@@ -61,8 +66,13 @@ class AuthCubit extends Cubit<AuthState> {
       // After successful registration, directly log in the user
       await login(email: email, password: password);
     } on DioException catch (e) {
-      final message =
-          e.response?.data['message']?.toString() ?? 'Network error';
+      final data = e.response?.data;
+      String message;
+      if (data is Map && data['message'] != null) {
+        message = data['message'].toString();
+      } else {
+        message = e.message ?? 'Network error';
+      }
       emit(AuthError(message));
     } catch (e) {
       emit(AuthError(e.toString()));

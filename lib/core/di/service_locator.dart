@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:the_pink_club/core/cache/cache_service.dart';
 import 'package:the_pink_club/core/network/api_client.dart';
+import 'package:the_pink_club/core/network/app_interceptor.dart';
 import 'package:the_pink_club/core/providers/locale_cubit.dart';
 import 'package:the_pink_club/features/auth/data/auth_repository.dart';
 import 'package:the_pink_club/features/auth/presentation/providers/auth_cubit.dart';
@@ -27,7 +28,19 @@ Future<void> init() async {
   // Core - Other Services
   sl.registerLazySingleton(() => LocaleCubit());
   sl.registerLazySingleton(() => ApiClient());
-  sl.registerLazySingleton(() => AuthRepository(Dio(), sl.get()));
+
+  // Auth - Dedicated Dio with interceptor and base URL
+  sl.registerLazySingleton<AuthRepository>(() {
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: 'https://thepinkclub.net/admin/api/',
+        connectTimeout: const Duration(seconds: 20),
+        receiveTimeout: const Duration(seconds: 20),
+      ),
+    );
+    dio.interceptors.add(AppInterceptor());
+    return AuthRepository(dio, sl.get());
+  });
 
   // Repositories
   sl.registerLazySingleton(() => AboutRepository(sl.get(), sl.get()));

@@ -4,7 +4,6 @@ import 'package:the_pink_club/core/cache/cache_service.dart';
 import 'models/user_model.dart';
 
 class AuthRepository {
-  static const String _baseUrl = 'https://thepinkclub.net/admin/api/';
   static const String _userCacheKey = 'current_user';
 
   final Dio _dio;
@@ -12,26 +11,49 @@ class AuthRepository {
 
   AuthRepository(this._dio, this._cache);
 
+  String _normalizeGender(String gender) {
+    final value = gender.toLowerCase().trim();
+
+    // Map localized/arabic values to backend expected strings
+    if (value.contains('male') || value.contains('ذكر')) {
+      return 'Male';
+    }
+    if (value.contains('female') || value.contains('أنث')) {
+      return 'Female';
+    }
+
+    // Fallback: send as-is
+    return gender;
+  }
+
   Future<UserModel> login({
     required String email,
     required String password,
   }) async {
     final response = await _dio.post(
-      '${_baseUrl}login.php',
-      data: {
-        'email': email,
-        'password': password,
-      },
+      'login.php',
+      data: {'email': email, 'password': password},
     );
 
-    final data = response.data as Map<String, dynamic>;
+    final raw = response.data;
+    if (raw is! Map) {
+      throw Exception('Unexpected response format from server');
+    }
+
+    final data = Map<String, dynamic>.from(raw);
     final success = data['success'] == true;
 
     if (!success) {
-      throw Exception(data['message'] ?? 'Login failed');
+      final message = data['message']?.toString() ?? 'Login failed';
+      throw Exception(message);
     }
 
-    final userJson = Map<String, dynamic>.from(data['user'] as Map);
+    final userField = data['user'];
+    if (userField is! Map) {
+      throw Exception('Missing user data in response');
+    }
+
+    final userJson = Map<String, dynamic>.from(userField);
     final user = UserModel.fromJson(userJson);
 
     await _cache.put<Map<String, dynamic>>(_userCacheKey, user.toJson());
@@ -50,12 +72,12 @@ class AuthRepository {
     required String confirmPassword,
   }) async {
     final response = await _dio.post(
-      '${_baseUrl}register.php',
+      'register.php',
       data: {
         'full_name': fullName,
         'email': email,
         'birthday': birthday,
-        'gender': gender,
+        'gender': _normalizeGender(gender),
         'phone_number': phoneNumber,
         'address': address,
         'password': password,
@@ -63,11 +85,18 @@ class AuthRepository {
       },
     );
 
-    final data = response.data as Map<String, dynamic>;
+    final raw = response.data;
+    if (raw is! Map) {
+      // Backend may return plain string on success; treat non-JSON 2xx as success
+      return;
+    }
+
+    final data = Map<String, dynamic>.from(raw);
     final success = data['success'] == true;
 
     if (!success) {
-      throw Exception(data['message'] ?? 'Registration failed');
+      final message = data['message']?.toString() ?? 'Registration failed';
+      throw Exception(message);
     }
   }
 
@@ -81,5 +110,3 @@ class AuthRepository {
     await _cache.delete(_userCacheKey);
   }
 }
-
-
