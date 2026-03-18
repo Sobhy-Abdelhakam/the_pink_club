@@ -11,39 +11,66 @@ class AuthRepository {
 
   AuthRepository(this._dio, this._cache);
 
-  Future<UserModel> login({
-    required String email,
-    required String password,
-  }) async {
-    final response = await _dio.post(
-      'login.php',
-      data: {'email': email, 'password': password},
-    );
+  // ================== 🔥 Helpers ==================
 
+  String _extractMessage(dynamic data, {String fallback = 'Something went wrong'}) {
+    if (data is Map) {
+      return data['message']?.toString() ??
+          data['error']?.toString() ??
+          fallback;
+    }
+    return fallback;
+  }
+
+  Map<String, dynamic> _parseResponse(Response response) {
     final raw = response.data;
+
     if (raw is! Map) {
       throw Exception('Unexpected response format from server');
     }
 
-    final data = Map<String, dynamic>.from(raw);
-    final success = data['success'] == true;
+    return Map<String, dynamic>.from(raw);
+  }
 
-    if (!success) {
-      final message = data['message']?.toString() ?? 'Login failed';
-      throw Exception(message);
+  Never _handleDioError(DioException e, {String fallback = 'Network error'}) {
+    final data = e.response?.data;
+
+    final message = _extractMessage(data, fallback: fallback);
+    throw Exception(message);
+  }
+
+
+  // ================== 🔐 Auth ==================
+
+  Future<UserModel> login({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _dio.post(
+        'login.php',
+        data: {'email': email, 'password': password},
+      );
+
+      final data = _parseResponse(response);
+
+      if (data['success'] != true) {
+        throw Exception(_extractMessage(data, fallback: 'Login failed'));
+      }
+
+      final userField = data['user'];
+      if (userField is! Map) {
+        throw Exception('Missing user data in response');
+      }
+
+      final user = UserModel.fromJson(Map<String, dynamic>.from(userField));
+
+      await _cache.put<Map<String, dynamic>>(_userCacheKey, user.toJson());
+
+      return user;
+    } on DioException catch (e) {
+      _handleDioError(e, fallback: 'Login failed');
     }
-
-    final userField = data['user'];
-    if (userField is! Map) {
-      throw Exception('Missing user data in response');
-    }
-
-    final userJson = Map<String, dynamic>.from(userField);
-    final user = UserModel.fromJson(userJson);
-
-    await _cache.put<Map<String, dynamic>>(_userCacheKey, user.toJson());
-
-    return user;
   }
 
   Future<void> register({
@@ -56,106 +83,100 @@ class AuthRepository {
     required String password,
     required String confirmPassword,
   }) async {
-    final response = await _dio.post(
-      'register.php',
-      data: {
-        'full_name': fullName,
-        'email': email,
-        'birthday': birthday,
-        // 'gender': _normalizeGender(gender),
-        'gender': 'Female',
-        'phone_number': phoneNumber,
-        'address': address,
-        'password': password,
-        'confirm_password': confirmPassword,
-      },
-    );
+    try {
+      final response = await _dio.post(
+        'register.php',
+        data: {
+          'full_name': fullName,
+          'email': email,
+          'birthday': birthday,
+          'gender': 'Female',
+          'phone_number': phoneNumber,
+          'address': address,
+          'password': password,
+          'confirm_password': confirmPassword,
+        },
+      );
 
-    final raw = response.data;
-    if (raw is! Map) {
-      // Backend may return plain string on success; treat non-JSON 2xx as success
-      return;
-    }
+      final raw = response.data;
 
-    final data = Map<String, dynamic>.from(raw);
-    final success = data['success'] == true;
+      // backend ممكن يرجع string
+      if (raw is! Map) return;
 
-    if (!success) {
-      final message = data['message']?.toString() ?? 'Registration failed';
-      throw Exception(message);
+      final data = Map<String, dynamic>.from(raw);
+
+      if (data['success'] != true) {
+        throw Exception(_extractMessage(data, fallback: 'Registration failed'));
+      }
+    } on DioException catch (e) {
+      _handleDioError(e, fallback: 'Registration failed');
     }
   }
 
+  // ================== 🔁 Reset Password ==================
+
   Future<void> requestOtp(String email) async {
-    final response = await _dio.post(
-      'request_password_reset.php',
-      data: {'email': email},
-    );
+    try {
+      final response = await _dio.post(
+        'request_password_reset.php',
+        data: {'email': email},
+      );
 
-    final raw = response.data;
-    if (raw is! Map) {
-      throw Exception('Unexpected response format from server');
-    }
+      final data = _parseResponse(response);
 
-    final data = Map<String, dynamic>.from(raw);
-    final success = data['success'] == true;
-
-    if (!success) {
-      final message = data['message']?.toString() ?? 'OTP request failed';
-      throw Exception(message);
+      if (data['success'] != true) {
+        throw Exception(_extractMessage(data, fallback: 'OTP request failed'));
+      }
+    } on DioException catch (e) {
+      _handleDioError(e, fallback: 'OTP request failed');
     }
   }
 
   Future<void> verifyOtp(String email, String otp) async {
-    final response = await _dio.post(
-      'verify_reset_otp.php',
-      data: {'email': email, 'otp': otp},
-    );
+    try {
+      final response = await _dio.post(
+        'verify_reset_otp.php',
+        data: {'email': email, 'otp': otp},
+      );
 
-    final raw = response.data;
-    if (raw is! Map) {
-      throw Exception('Unexpected response format from server');
-    }
+      final data = _parseResponse(response);
 
-    final data = Map<String, dynamic>.from(raw);
-    final success = data['success'] == true;
-
-    if (!success) {
-      final message = data['message']?.toString() ?? 'OTP verification failed';
-      throw Exception(message);
+      if (data['success'] != true) {
+        throw Exception(_extractMessage(data, fallback: 'OTP verification failed'));
+      }
+    } on DioException catch (e) {
+      _handleDioError(e, fallback: 'OTP verification failed');
     }
   }
 
-  // reset password after OTP verification by sending email, otp, password, and confirm password
   Future<void> resetPassword({
     required String email,
     required String otp,
     required String newPassword,
     required String confirmPassword,
   }) async {
-    final response = await _dio.post(
-      'reset_password.php',
-      data: {
-        'email': email,
-        'otp': otp,
-        'password': newPassword,
-        'confirm_password': confirmPassword,
-      },
-    );
+    try {
+      final response = await _dio.post(
+        'reset_password.php',
+        data: {
+          'email': email,
+          'otp': otp,
+          'password': newPassword,
+          'confirm_password': confirmPassword,
+        },
+      );
 
-    final raw = response.data;
-    if (raw is! Map) {
-      throw Exception('Unexpected response format from server');
-    }
+      final data = _parseResponse(response);
 
-    final data = Map<String, dynamic>.from(raw);
-    final success = data['success'] == true;
-
-    if (!success) {
-      final message = data['message']?.toString() ?? 'Password reset failed';
-      throw Exception(message);
+      if (data['success'] != true) {
+        throw Exception(_extractMessage(data, fallback: 'Password reset failed'));
+      }
+    } on DioException catch (e) {
+      _handleDioError(e, fallback: 'Password reset failed');
     }
   }
+
+  // ================== 💾 Cache ==================
 
   Future<UserModel?> getSavedUser() async {
     final json = await _cache.get<Map>(_userCacheKey);

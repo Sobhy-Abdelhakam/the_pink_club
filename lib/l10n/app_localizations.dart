@@ -752,6 +752,150 @@ abstract class AppLocalizations {
   /// **'Create Account'**
   String get registerButton;
 
+  /// No description provided for @forgotPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgotPasswordButton;
+
+  /// No description provided for @requestOtpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get requestOtpTitle;
+
+  /// No description provided for @requestOtpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email to receive a 6-digit OTP.'**
+  String get requestOtpSubtitle;
+
+  /// No description provided for @sendOtpButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get sendOtpButton;
+
+  /// No description provided for @invalidEmailError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email address.'**
+  String get invalidEmailError;
+
+  /// No description provided for @otpSentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP sent successfully. Check your email.'**
+  String get otpSentSuccess;
+
+  /// No description provided for @verifyOtpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify OTP'**
+  String get verifyOtpTitle;
+
+  /// No description provided for @verifyOtpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 6-digit code sent to your email.'**
+  String get verifyOtpSubtitle;
+
+  /// No description provided for @verifyOtpButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify OTP'**
+  String get verifyOtpButton;
+
+  /// No description provided for @resendOtpButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend OTP'**
+  String get resendOtpButton;
+
+  /// No description provided for @resendOtpInSeconds.
+  ///
+  /// In en, this message translates to:
+  /// **'Resend in {seconds}s'**
+  String resendOtpInSeconds(Object seconds);
+
+  /// No description provided for @otpRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP is required.'**
+  String get otpRequiredError;
+
+  /// No description provided for @wrongOtpError.
+  ///
+  /// In en, this message translates to:
+  /// **'The OTP you entered is incorrect.'**
+  String get wrongOtpError;
+
+  /// No description provided for @expiredOtpError.
+  ///
+  /// In en, this message translates to:
+  /// **'This OTP has expired. Please resend.'**
+  String get expiredOtpError;
+
+  /// No description provided for @tooManyRequestsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please try again later.'**
+  String get tooManyRequestsError;
+
+  /// No description provided for @networkFailureError.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your internet connection and try again.'**
+  String get networkFailureError;
+
+  /// No description provided for @otpVerifiedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'OTP verified. Continue to reset password.'**
+  String get otpVerifiedSuccess;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @newPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPasswordLabel;
+
+  /// No description provided for @confirmPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Password'**
+  String get confirmPasswordLabel;
+
+  /// No description provided for @resetPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPasswordButton;
+
+  /// No description provided for @passwordMinError.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters.'**
+  String get passwordMinError;
+
+  /// No description provided for @resetPasswordsNotMatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match.'**
+  String get resetPasswordsNotMatch;
+
+  /// No description provided for @passwordResetSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password has been updated.'**
+  String get passwordResetSuccess;
+
   /// Welcome message with user first name
   ///
   /// In en, this message translates to:

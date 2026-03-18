@@ -342,6 +342,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String get registerButton => 'Create Account';
 
   @override
+  String get forgotPasswordButton => 'Forgot Password?';
+
+  @override
+  String get requestOtpTitle => 'Reset Password';
+
+  @override
+  String get requestOtpSubtitle => 'Enter your email to receive a 6-digit OTP.';
+
+  @override
+  String get sendOtpButton => 'Send OTP';
+
+  @override
+  String get invalidEmailError => 'Please enter a valid email address.';
+
+  @override
+  String get otpSentSuccess => 'OTP sent successfully. Check your email.';
+
+  @override
+  String get verifyOtpTitle => 'Verify OTP';
+
+  @override
+  String get verifyOtpSubtitle => 'Enter the 6-digit code sent to your email.';
+
+  @override
+  String get verifyOtpButton => 'Verify OTP';
+
+  @override
+  String get resendOtpButton => 'Resend OTP';
+
+  @override
+  String resendOtpInSeconds(Object seconds) {
+    return 'Resend in ${seconds}s';
+  }
+
+  @override
+  String get otpRequiredError => 'OTP is required.';
+
+  @override
+  String get wrongOtpError => 'The OTP you entered is incorrect.';
+
+  @override
+  String get expiredOtpError => 'This OTP has expired. Please resend.';
+
+  @override
+  String get tooManyRequestsError =>
+      'Too many requests. Please try again later.';
+
+  @override
+  String get networkFailureError =>
+      'Network error. Please check your internet connection and try again.';
+
+  @override
+  String get otpVerifiedSuccess => 'OTP verified. Continue to reset password.';
+
+  @override
+  String get resetPasswordTitle => 'Reset Password';
+
+  @override
+  String get newPasswordLabel => 'New Password';
+
+  @override
+  String get confirmPasswordLabel => 'Confirm Password';
+
+  @override
+  String get resetPasswordButton => 'Reset Password';
+
+  @override
+  String get passwordMinError => 'Password must be at least 6 characters.';
+
+  @override
+  String get resetPasswordsNotMatch => 'Passwords do not match.';
+
+  @override
+  String get passwordResetSuccess => 'Your password has been updated.';
+
+  @override
   String welcomeBack(String name) {
     return 'Welcome back, $name';
   }

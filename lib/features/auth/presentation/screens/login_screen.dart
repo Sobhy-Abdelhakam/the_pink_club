@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:the_pink_club/core/di/service_locator.dart';
 import 'package:the_pink_club/core/theme/app_colors.dart';
 import 'package:the_pink_club/core/widgets/elite_button.dart';
 import 'package:the_pink_club/core/widgets/elite_text_field.dart';
+import 'package:the_pink_club/features/auth/data/auth_repository.dart';
 import 'package:the_pink_club/features/auth/presentation/providers/auth_cubit.dart';
+import 'package:the_pink_club/features/auth/presentation/providers/password_reset_cubit.dart';
 import 'package:the_pink_club/features/auth/presentation/providers/auth_state.dart';
 import 'package:the_pink_club/features/auth/presentation/screens/register_screen.dart';
+import 'package:the_pink_club/features/auth/presentation/screens/request_otp_screen.dart';
 import 'package:the_pink_club/features/services/presentation/screens/main_screen.dart';
 import 'package:the_pink_club/l10n/app_localizations.dart';
 
@@ -130,6 +134,33 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: isLoading
                                   ? null
                                   : () => _onLogin(cubit),
+                            ),
+                            const SizedBox(height: 12),
+                            Align(
+                              alignment: Alignment.center,
+                              child: TextButton(
+                                onPressed: isLoading
+                                    ? null
+                                    : () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => BlocProvider(
+                                              create: (_) => PasswordResetCubit(
+                                                sl<AuthRepository>(),
+                                              ),
+                                              child: const RequestOtpScreen(),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                child: Text(
+                                  l10n.forgotPasswordButton,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                              ),
                             ),
                             const SizedBox(height: 16),
                             Row(

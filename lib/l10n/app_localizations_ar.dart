@@ -338,6 +338,85 @@ class AppLocalizationsAr extends AppLocalizations {
   String get registerButton => 'إنشاء الحساب';
 
   @override
+  String get forgotPasswordButton => 'نسيت كلمة المرور؟';
+
+  @override
+  String get requestOtpTitle => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get requestOtpSubtitle =>
+      'أدخل بريدك الإلكتروني لتلقي رمز OTP مكوّن من 6 أرقام.';
+
+  @override
+  String get sendOtpButton => 'إرسال رمز OTP';
+
+  @override
+  String get invalidEmailError => 'يرجى إدخال بريد إلكتروني صحيح.';
+
+  @override
+  String get otpSentSuccess => 'تم إرسال الرمز بنجاح. تحقق من بريدك.';
+
+  @override
+  String get verifyOtpTitle => 'التحقق من الرمز';
+
+  @override
+  String get verifyOtpSubtitle =>
+      'أدخل الرمز المكوّن من 6 أرقام المرسل إلى بريدك.';
+
+  @override
+  String get verifyOtpButton => 'تحقق من OTP';
+
+  @override
+  String get resendOtpButton => 'إعادة إرسال رمز OTP';
+
+  @override
+  String resendOtpInSeconds(Object seconds) {
+    return 'يمكنك إعادة الإرسال خلال $secondsث';
+  }
+
+  @override
+  String get otpRequiredError => 'الرمز مطلوب.';
+
+  @override
+  String get wrongOtpError => 'رمز OTP غير صحيح.';
+
+  @override
+  String get expiredOtpError => 'انتهت صلاحية هذا الرمز. يرجى إعادة الإرسال.';
+
+  @override
+  String get tooManyRequestsError =>
+      'عدد كبير جدًا من الطلبات. حاول مرة أخرى لاحقًا.';
+
+  @override
+  String get networkFailureError =>
+      'خطأ في الشبكة. يرجى التحقق من اتصالك بالإنترنت ومحاولة مرة أخرى.';
+
+  @override
+  String get otpVerifiedSuccess =>
+      'تم التحقق من OTP. تابع لإعادة تعيين كلمة المرور.';
+
+  @override
+  String get resetPasswordTitle => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get newPasswordLabel => 'كلمة المرور الجديدة';
+
+  @override
+  String get confirmPasswordLabel => 'تأكيد كلمة المرور';
+
+  @override
+  String get resetPasswordButton => 'إعادة تعيين كلمة المرور';
+
+  @override
+  String get passwordMinError => 'يجب أن تكون كلمة المرور 6 أحرف على الأقل.';
+
+  @override
+  String get resetPasswordsNotMatch => 'كلمتا المرور غير متطابقتين.';
+
+  @override
+  String get passwordResetSuccess => 'تم تحديث كلمة المرور بنجاح.';
+
+  @override
   String welcomeBack(String name) {
     return 'أهلا بعودتك، $name';
   }
