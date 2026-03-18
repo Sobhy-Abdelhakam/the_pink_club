@@ -11,21 +11,6 @@ class AuthRepository {
 
   AuthRepository(this._dio, this._cache);
 
-  String _normalizeGender(String gender) {
-    final value = gender.toLowerCase().trim();
-
-    // Map localized/arabic values to backend expected strings
-    if (value.contains('male') || value.contains('ذكر')) {
-      return 'Male';
-    }
-    if (value.contains('female') || value.contains('أنث')) {
-      return 'Female';
-    }
-
-    // Fallback: send as-is
-    return gender;
-  }
-
   Future<UserModel> login({
     required String email,
     required String password,
@@ -97,6 +82,77 @@ class AuthRepository {
 
     if (!success) {
       final message = data['message']?.toString() ?? 'Registration failed';
+      throw Exception(message);
+    }
+  }
+
+  Future<void> requestOtp(String email) async {
+    final response = await _dio.post(
+      'request_password_reset.php',
+      data: {'email': email},
+    );
+
+    final raw = response.data;
+    if (raw is! Map) {
+      throw Exception('Unexpected response format from server');
+    }
+
+    final data = Map<String, dynamic>.from(raw);
+    final success = data['success'] == true;
+
+    if (!success) {
+      final message = data['message']?.toString() ?? 'OTP request failed';
+      throw Exception(message);
+    }
+  }
+
+  Future<void> verifyOtp(String email, String otp) async {
+    final response = await _dio.post(
+      'verify_reset_otp.php',
+      data: {'email': email, 'otp': otp},
+    );
+
+    final raw = response.data;
+    if (raw is! Map) {
+      throw Exception('Unexpected response format from server');
+    }
+
+    final data = Map<String, dynamic>.from(raw);
+    final success = data['success'] == true;
+
+    if (!success) {
+      final message = data['message']?.toString() ?? 'OTP verification failed';
+      throw Exception(message);
+    }
+  }
+
+  // reset password after OTP verification by sending email, otp, password, and confirm password
+  Future<void> resetPassword({
+    required String email,
+    required String otp,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final response = await _dio.post(
+      'reset_password.php',
+      data: {
+        'email': email,
+        'otp': otp,
+        'password': newPassword,
+        'confirm_password': confirmPassword,
+      },
+    );
+
+    final raw = response.data;
+    if (raw is! Map) {
+      throw Exception('Unexpected response format from server');
+    }
+
+    final data = Map<String, dynamic>.from(raw);
+    final success = data['success'] == true;
+
+    if (!success) {
+      final message = data['message']?.toString() ?? 'Password reset failed';
       throw Exception(message);
     }
   }
