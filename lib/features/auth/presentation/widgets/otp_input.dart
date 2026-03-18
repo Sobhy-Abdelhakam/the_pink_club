@@ -57,9 +57,12 @@ class _OtpInputState extends State<OtpInput> {
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: List.generate(widget.length, (index) {
+      children: List.generate(widget.length, (visualIndex) {
+        // In RTL, the "first" OTP digit (index 0 in the OTP string) should be displayed on the right.
+        final index = isRtl ? (widget.length - 1 - visualIndex) : visualIndex;
         return SizedBox(
           width: 44,
           child: TextField(
@@ -69,28 +72,35 @@ class _OtpInputState extends State<OtpInput> {
             keyboardType: TextInputType.number,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
             maxLength: widget.length,
             decoration: InputDecoration(
               counterText: '',
               filled: true,
               fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 12,
-              ),
+              contentPadding: const EdgeInsets.symmetric(vertical: 12),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: AppColors.divider, width: 0.8),
+                borderSide: const BorderSide(
+                  color: AppColors.divider,
+                  width: 0.8,
+                ),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: AppColors.divider, width: 0.8),
+                borderSide: const BorderSide(
+                  color: AppColors.divider,
+                  width: 0.8,
+                ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 1.5,
+                ),
               ),
               errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -124,9 +134,11 @@ class _OtpInputState extends State<OtpInput> {
               // Handle paste/autofill where multiple digits arrive at once.
               int cursor = index;
               _isSyncing = true;
-              for (int i = 0;
-                  i < digits.length && cursor < widget.length;
-                  i++, cursor++) {
+              for (
+                int i = 0;
+                i < digits.length && cursor < widget.length;
+                i++, cursor++
+              ) {
                 _controllers[cursor].text = digits[i];
               }
 
@@ -151,4 +163,3 @@ class _OtpInputState extends State<OtpInput> {
     );
   }
 }
-
