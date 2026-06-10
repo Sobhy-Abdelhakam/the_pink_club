@@ -76,7 +76,7 @@ class _SplashScreenState extends State<SplashScreen> {
                     ],
                   ),
                   child: Image.asset(
-                    'assets/images/logo.jpg', // استبدل هذا بمسار الصورة الخاص بك
+                    'assets/images/logo.png', // استبدل هذا بمسار الصورة الخاص بك
                     width: 150,
                     height: 150,
                   ),
